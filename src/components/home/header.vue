@@ -6,7 +6,9 @@
         Chicken Music
       </div>
     </div>
-    <div class='user-icon'></div>
+    <div class='user-icon'>
+      <span class='icon-mine'></span>
+    </div>
   </div>
 </template>
 
@@ -48,4 +50,11 @@ export default {
     height: 44px
     z-index 1
     border:1px solid red
+    span
+      display inline-block
+      color: $color-theme
+      font-size: $font-size-large-x
+      line-height 44px
+      width 44px
+      text-align center
 </style>
