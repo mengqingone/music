@@ -1,17 +1,20 @@
 <template>
-  <div class='music-frame'>
-    <slider>
-    <ul>
-      <li v-for="(item, index) in imageList" :key="index">
-        <img :src="item.pic_info.url" class='slider-img'>
-      </li>
-    </ul>
-    </slider>
+  <div>
+    <div class='music-frame'>
+      <slider v-if="this.imageList.length > 0" :imageList="imageList">
+        <li v-for="(item, index) in imageList" :key="index" class='list-item'>
+          <img :src="item.pic_info.url" class='slider-img'>
+        </li>
+      </slider>
+    </div>
+    <div class='rest'>hello</div>
   </div>
+
 </template>
 
 <script>
 import getRecommend from '@/api/recommend.js'
+import { ERROR_OK } from '@/api/config.js'
 import slider from '@/base/slider'
 export default {
   data() {
@@ -27,7 +30,9 @@ export default {
     _getRecommend() {
       let _this = this
       getRecommend().then(function(res) {
-        _this.imageList = res.focus.data.content
+        if (res.code === ERROR_OK) {
+          _this.imageList = res.focus.data.content
+        }
       }, function(err) {
         console.log(err)
       })
@@ -44,8 +49,8 @@ export default {
     width: 100%
     height: 0
     padding-bottom 40%
-    background-color red
-    .slider-img
+    overflow hidden
+    .rest
+      height: 1000px
       width: 100%
-      height: 100%
 </style>

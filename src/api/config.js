@@ -13,3 +13,4 @@ export const options = {
   param: 'jsonpCallback',
   name: 'getindexData'
 }
+export const ERROR_OK = 0
