@@ -134,6 +134,7 @@ export default {
   beforeDestroy() {
     this.scroll.disable()
     clearTimeout(this.timer)
+    this.timer = null
   }
 }
 </script>
