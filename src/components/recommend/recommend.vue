@@ -1,7 +1,7 @@
 <template>
   <div class='recommend-page'>
     <scroll :listLength="hotSongList.length" ref='scroll' class='wrapper'>
-      <div class='content'>
+      <div :class="[{'content-height': isloading }, 'content']">
         <div class='music-frame'>
           <slider v-if="this.imageList.length > 0" :imageList="imageList">
             <li v-for="(item, index) in imageList" :key="index" class='list-item'>
@@ -23,6 +23,9 @@
             </div>
           </div>
         </div>
+        <div class='loading' v-show="hotSongList.length == 0">
+          <loading class='loading-inner'></loading>
+        </div>
       </div>
     </scroll>
   </div>
@@ -34,13 +37,15 @@ import {getRecommend, getRecommendList} from '@/api/recommend.js'
 import { ERROR_OK } from '@/api/config.js'
 import slider from '@/base/slider'
 import scroll from '@/base/scroll'
+import loading from '@/base/loading/imageloading'
 export default {
   data() {
     return {
       name: 'recommend',
       imageList: [],
       hotSongList: [],
-      loadOK: false
+      loadOK: false,
+      isloading: true
     }
   },
   watch: {
@@ -48,6 +53,9 @@ export default {
       if (val) {
         this.$refs.scroll.refresh()
       }
+    },
+    hotSongList(val, old) {
+      this.isloading = !val.length
     }
   },
   computed: {
@@ -83,7 +91,8 @@ export default {
   },
   components: {
     slider,
-    scroll
+    scroll,
+    loading
   }
 }
 </script>
@@ -98,40 +107,53 @@ export default {
   .wrapper
     height 100%
     overflow hidden
-    .music-frame
-      width: 100%
-      height: 0
-      padding-bottom 40%
-      overflow hidden
-    .hot-song
-      .hot-title
-        text-align: center
-        height: 65px
-        line-height 65px
+    .content-height
+      height 100%
+    .content
+      display flex
+      flex-direction column
+      .music-frame
         width: 100%
-        color: #ffcd32
-      .hot-detail
-        .hot-list
-          display flex
-          justify-content: flex-start
-          .hot-image
-            box-sizing border-box
-            width: 80px;
-            height: 80px;
-            img
-              display inline-block
-              padding 10px
-              width: 60px
-              height: 60px
-          .list-detail
-            display: flex
-            font-size: 14px
-            flex-direction column
-            justify-content center
-            flex 1
-            .hotlist-title
-              padding: 10px
-            .hotlist-info
-              padding: 10px
+        height: 0
+        padding-bottom 40%
+        overflow hidden
+      .hot-song
+        .hot-title
+          text-align: center
+          height: 65px
+          line-height 65px
+          width: 100%
+          color: #ffcd32
+        .hot-detail
+          .hot-list
+            display flex
+            justify-content: flex-start
+            .hot-image
+              box-sizing border-box
+              width: 80px;
+              height: 80px;
+              img
+                display inline-block
+                padding 10px
+                width: 60px
+                height: 60px
+            .list-detail
+              display: flex
+              font-size: 14px
+              flex-direction column
+              justify-content center
+              flex 1
+              .hotlist-title
+                padding: 10px
+              .hotlist-info
+                padding: 10px
+      .loading
+        position relative
+        flex: 1
+        .loading-inner
+          position:absolute
+          top: 50%
+          left: 50%
+          transform : translateY(-50%) translateX(-50%)
 
 </style>
