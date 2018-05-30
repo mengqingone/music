@@ -5,7 +5,9 @@
         <div class='music-frame'>
           <slider v-if="this.imageList.length > 0" :imageList="imageList">
             <li v-for="(item, index) in imageList" :key="index" class='list-item'>
-              <img :src="item.pic_info.url" class='slider-img' @load="imageLoad">
+              <img :src="item.pic_info.url"
+                  class='slider-img needsclick'
+                  @load="imageLoad">
             </li>
           </slider>
         </div>
@@ -14,7 +16,7 @@
           <div class='hot-detail' v-for='(item, index) in hotSongList' :key='index'>
             <div class='hot-list'>
               <div class='hot-image'>
-                <img :src="item.imgurl">
+                <img v-lazy="item.imgurl">
               </div>
               <div class='list-detail'>
                 <div class='hotlist-title'>{{item.creator.name}}</div>
