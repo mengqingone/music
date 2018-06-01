@@ -24,7 +24,7 @@ export default {
     },
     threshold: {
       type: Number,
-      default: 0.3
+      default: 0.1
     }
   },
   components: {
@@ -38,13 +38,13 @@ export default {
         scrollY: true,
         scrollX: false,
         click: true,
-        momentum: false,
-        scrollbar: true,
-        snap: {
-          loop: this.loop,
-          threshold: this.threshold,
-          speed: this.speed
-        }
+        momentum: true,
+        scrollbar: {
+          fade: true,
+          interactive: false // 1.8.0 新增
+        },
+        freeScroll: true,
+        bounce: true
       })
     },
     refresh() {

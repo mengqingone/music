@@ -84,7 +84,9 @@ export default {
       let _this = this
       getRecommend().then(function(res) {
         if (res.code === ERROR_OK) {
-          _this.imageList = res.focus.data.content
+          if (res.focus) {
+            _this.imageList = res.focus.data.content
+          }
         }
       }, function(err) {
         console.log(err)
