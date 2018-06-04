@@ -13,7 +13,10 @@
           ref='singerGroup'
           :data-keyword="item.title">
           <li class='prefix'>{{item.title === 'hot' ? '热门': item.title}}</li>
-          <li class='singer-detail' v-for="value in item.items" :key="value.id">
+          <li class='singer-detail'
+              v-for="value in item.items"
+              :key="value.id"
+              @click="detail(value)">
             <div class='singer-url'>
               <img :src="value.imgUrl">
             </div>
@@ -171,6 +174,9 @@ export default {
       if (result) {
         this.$refs.scroll.scrollToElement(result, 0)
       }
+    },
+    detail(item) {
+      this.$emit('detail', item)
     }
   }
 }

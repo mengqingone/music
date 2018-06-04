@@ -1,6 +1,9 @@
 <template>
   <div>
-    <list-view :singerList='singerList' ></list-view>
+    <list-view :singerList='singerList' @detail="singerdetail"></list-view>
+    <transition name="slider">
+      <router-view></router-view>
+    </transition>
   </div>
 </template>
 
@@ -9,6 +12,7 @@ import { getSingerList } from '@/api/singer.js'
 import { ERROR_OK } from '@/api/config.js'
 import Singer from '@/common/js/singer.js'
 import listView from '@/base/listView.vue'
+import { mapMutations } from 'vuex'
 export default {
   data() {
     return {
@@ -27,6 +31,9 @@ export default {
     listView
   },
   methods: {
+    ...mapMutations({
+      setSinger: 'SET_SINGER'
+    }),
     _getSingerList() {
       let _this = this
       getSingerList().then(function(res) {
@@ -69,19 +76,22 @@ export default {
       this.restSinger.sort(function(a, b) {
         return (a.title.charCodeAt(0)) - (b.title.charCodeAt(0))
       })
+    },
+    singerdetail(Singer) {
+      this.setSinger(Singer)
+      this.$router.push({path: `/singer/${Singer.id}`})
     }
   }
 }
-
-// this.prefixList.sort(function(a, b) {
-//   if (a === '#') {
-//     return 35 - b.toString().charCodeAt()
-//   } else {
-//     return (a.toString().charCodeAt()) - (b.toString().charCodeAt())
-//   }
-// })
-// this.prefixList.unshift(this.HOTDESC)
 </script>
 
 <style lang="stylus" scoped>
+.slider-enter,
+.slider-leave-to {
+  transform translateX(100%)
+}
+.slider-enter-active,
+.slider-leave-active{
+  transition all 3s
+}
 </style>

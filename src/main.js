@@ -6,7 +6,7 @@ import 'common/stylus/index.styl'
 import 'babel-polyfill'
 import axios from 'axios'
 import VueLazyload from 'vue-lazyload'
-
+import store from '@/store/index.js'
 Vue.prototype.$ajax = axios
 Vue.config.productionTip = false
 fastClick.attach(document.body)
@@ -22,5 +22,6 @@ Vue.use(VueLazyload, {
 new Vue({
   el: '#app',
   router,
+  store,
   render: h => h(App)
 })
