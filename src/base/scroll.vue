@@ -25,6 +25,14 @@ export default {
     threshold: {
       type: Number,
       default: 0.1
+    },
+    probeType: {
+      type: Number,
+      default: 0
+    },
+    listenScroll: {
+      type: Boolean,
+      default: false
     }
   },
   components: {
@@ -35,17 +43,22 @@ export default {
         return
       }
       this.scroll = new BScroll(this.$refs.wrapper, {
+        // 没有解决chrome报错的问题
+        preventDefault: false,
         scrollY: true,
         scrollX: false,
         click: true,
         momentum: true,
-        scrollbar: {
-          fade: true,
-          interactive: false // 1.8.0 新增
-        },
         freeScroll: true,
-        bounce: true
+        bounce: true,
+        probeType: this.probeType
       })
+      if (this.listenScroll) {
+        let _this = this
+        this.scroll.on('scroll', function(e) {
+          _this.$emit('scroll', e)
+        })
+      }
     },
     refresh() {
       this.scroll.refresh()
@@ -55,6 +68,12 @@ export default {
     },
     enable() {
       this.scroll && this.scroll.enable()
+    },
+    scrollToElement() {
+      this.scroll && this.scroll.scrollToElement.apply(this.scroll, arguments)
+    },
+    scrollTo(y) {
+      this.scroll && this.scroll.scrollTo.apply(this.scroll, arguments)
     }
   },
   created() {
@@ -64,7 +83,6 @@ export default {
   },
   watch: {
     listLength() {
-      console.log('hello')
       this.refresh()
     }
   }
