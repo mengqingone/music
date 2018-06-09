@@ -6,12 +6,12 @@ export function getRecommend() {
     focus: { module: 'QQMusic.MusichallServer', method: 'GetFocus', param: {} }
   })
   const url = 'https://u.y.qq.com/cgi-bin/musicu.fcg'
-  let date = Object.assign(commondata, {data: `${dat}`})
-  return jsonp(url, date, options)
+  let data = Object.assign({}, commondata, {data: `${dat}`})
+  return jsonp(url, data, options)
 }
 
 export function getRecommendList() {
-  const data = Object.assign({}, commondata, {
+  let data = Object.assign({}, commondata, {
     sin: 0,
     ein: 29,
     sortId: 5,

@@ -1,6 +1,6 @@
 let _header = {
-  host: 'https://c.y.qq.com/',
-  referer: 'https://c.y.qq.com/'
+  host: 'https://y.qq.com/',
+  referer: 'https://y.qq.com/'
 }
 
 // CommonJS
