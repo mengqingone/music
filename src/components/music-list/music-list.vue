@@ -14,13 +14,14 @@
           </div>
         </div>
       </div>
-      <div class='list-body' :class="{'hide': reduceHeight}">
+      <div class='list-body' ref='listBody' :class="{'low-zindex':reduceHeight}">
         <div class='layer' ref="layer"></div>
         <scroll :list-length="songs.length"
                 class='wrapper'
                 :listenScroll ="listenScroll"
                 :probeType="probeType"
-                @scroll="scroll">
+                @scroll="scroll"
+                ref="songscroll">
           <song-list :s-list="songs"></song-list>
         </scroll>
         <div class='songs-loading' v-show="!songs.length">
@@ -65,7 +66,8 @@ export default {
       probeType: 3,
       scrollHeight: 0,
       TitleHeight: 40,
-      reduceHeight: false
+      reduceHeight: false,
+      refreshed: false
     }
   },
   components: {
@@ -75,9 +77,10 @@ export default {
   },
   methods: {
     scroll(e) {
-      let dom = this.$refs.layer
-      if ((e.y * -1) <= (this.scrollHeight - this.TitleHeight)) {
-        dom.style.transform = `translateY(${e.y + 'px'})`
+      let layerDom = this.$refs.layer
+      let bgImgDom = this.$refs.bgImg
+      if ((e.y * -1) < (this.scrollHeight - this.TitleHeight)) {
+        layerDom.style = `transform: translateY(${e.y + 'px'});`
         this.reduceHeight = false
       } else {
         this.reduceHeight = true
@@ -87,7 +90,7 @@ export default {
         let percent = Math.abs(e.y / this.scrollHeight)
         scale = 1 + percent
       }
-      this.$refs.bgImg.style.transform = `scale(${scale})`
+      bgImgDom.style.transform = `scale(${scale})`
     },
     back() {
       this.$router.back()
@@ -95,35 +98,36 @@ export default {
   },
   mounted() {
     this.scrollHeight = parseFloat(window.getComputedStyle(this.$refs.bgImg, null).getPropertyValue('padding-bottom'))
+    this.$refs.listBody.style.top = this.scrollHeight + 'px'
   }
 }
 </script>
 
 <style lang="stylus" scoped>
 @import '~common/stylus/variable'
+.low-zindex
+  z-index: -10
 .bg-reduce
+  position: absolute!important
   height: 40px!important
   padding-bottom 0!important
-.hide
-  overflow hidden
+  z-index: 10
 .image-header
   position fixed
-  display flex
-  flex-direction column
   left 0
   right 0
   bottom 0
   top 0
+  width 100%
+  height 100%
   .background-image
     position: relative
     width: 100%
     height: 0
     padding-bottom 70%
     overflow hidden
-    z-index 0
     img
       width: 100%
-      z-index 1
     .bg-blur
       position absolute
       z-index 2
@@ -155,11 +159,15 @@ export default {
           vertical-align: middle
           font-size: $font-size-small
   .list-body
-    position: relative
-    flex: 1
+    position: absolute
+    top: 0
+    bottom: 0
+    left: 0
+    right: 0
+    width: 100%
     .layer
+      height: 100%
       background-color: $color-background
-      height:100%
     .wrapper
       position absolute
       z-index: 100
@@ -167,6 +175,8 @@ export default {
       bottom: 0
       left: 0
       right: 0
+      width: 100%
+      height: 100%
     .songs-loading
        position absolute
        display flex
@@ -197,5 +207,4 @@ export default {
     text-align center
     line-height 40px
     font-size: $font-size-large
-
 </style>
