@@ -1,7 +1,7 @@
 <template>
   <div class="page">
     <ul class='container'>
-      <li v-for="(item, index) in sList" :key="index">
+      <li v-for="(item, index) in sList" :key="index" @click="playSong(index)">
         <h2>{{item.songname}}</h2>
         <p>{{item.singer + "." + item.albumname}}</p>
       </li>
@@ -21,6 +21,11 @@ export default {
   },
   components: {
 
+  },
+  methods: {
+    playSong(index) {
+      this.$emit('play', index)
+    }
   }
 }
 </script>
