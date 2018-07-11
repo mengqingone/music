@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Page Title</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+<style>
+  @keyframes aslide {
+    0% {
+      margin-left: 10px;
+    }
+    100% {
+      margin-left: 100px;
+    }
+  }
+
+  .red {
+    background-color: red;
+    width: 100px;
+    height: 100px;
+  }
+
+  .apper {
+    margin-top: 50px;
+  }
+
+  .apper-active {
+    margin-top: 100px;
+    animation: aslide 4s;
+    transition: all 3s;
+  }
+</style>
+
+<body>
+  <div id="app">
+    <transition
+      appear
+      appear-class="apper"
+      appear-active-class="apper-active"
+      >
+      <div class="red"></div>
+    </transition>
+    <button v-on:click="change">button</button>
+  </div>
+  <script>
+    new Vue({
+      el: '#app',
+      data: {
+        show: true
+      },
+      methods: {
+        change: function () {
+          this.show = !this.show;
+          console.log('-----------click---------');
+        },
+        customBeforeAppearHook: function (el) {
+          console.log('customBeforeAppearHook:');
+        },
+        customAppearHook: function (el, done) {
+          console.log('customAppearHook:');
+          done()
+        },
+        customAfterAppearHook: function (el) {
+          console.log('customAfterAppearHook:');
+        }
+      }
+    });
+  </script>
+</html>

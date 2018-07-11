@@ -1,6 +1,11 @@
 <template>
   <div class="page" v-if="playList.length > 0">
-    <transition name='normal'>
+    <transition name='normal'
+      @enter="enter"
+      @after-enter="afterEnter"
+      @leave="leave"
+      @after-leave="afterLeave"
+      >
       <div class='normal-player' v-show="fullgreen">
         <div class='back-ground'>
           <img :src="currentSong.image" alt="">
@@ -15,7 +20,7 @@
           <div class='singer'>{{currentSong.singer}}</div>
         </div>
         <div class='middle'>
-          <div class='middle-rotate'>
+          <div class='middle-rotate' ref='middleRotate'>
             <div class='middle-Mask'>
               <img class='middle-image' :src="currentSong.image">
             </div>
@@ -63,8 +68,8 @@
       </div>
     </transition>
     <transition name='mini'>
-      <div class='mini-player' v-show="!fullgreen" @click="turnFullScreen">
-        <div class="mini-image"><img :src="currentSong.image" class='image'></div>
+      <div class='mini-player' v-show="!fullgreen" @click="turnFullScreen"><!---->
+        <div class='mini-image' ref='miniImage'><img :src="currentSong.image" class='image'></div>
         <div class='mini-info'>
           <div class='mini-songname'>{{currentSong.songname}}</div>
           <div class='mini-singer'>{{currentSong.singer}}</div>
@@ -81,6 +86,9 @@
 
 <script>
 import {mapGetters, mapMutations} from 'vuex'
+import ww from 'window-watcher'
+import animations from 'create-keyframe-animation'
+
 export default {
   data() {
     return {
@@ -105,6 +113,83 @@ export default {
     },
     turnFullScreen() {
       this.setFullScreen(true)
+    },
+    enter(el, done) {
+      console.log('enter door')
+      let {x, y, scale} = this.getMiniPosAndScale()
+      let animates = {
+        '0%': {
+          translate: [x, y],
+          scale: scale
+        },
+        '60%': {
+          translate: [0, 0],
+          scale: 1.1
+        },
+        '100%': {
+          translate: [0, 0],
+          scale: 1
+        }
+      }
+      animations.registerAnimation({
+        name: 'move',
+        animation: animates,
+        presets: {
+          duration: 400,
+          easing: 'linear'
+        }
+      })
+      console.log('enter')
+      animations.runAnimation(this.$refs.middleRotate, 'move', done)
+    },
+    afterEnter() {
+      animations.unregisterAnimation('move')
+      this.$refs.middleRotate.style = ''
+      console.log('afterEnter')
+    },
+    leave(el, done) {
+      let {x, y, scale} = this.getMiniPosAndScale()
+      this.$refs.middleRotate.style.transition = 'all .4s'
+      this.$refs.middleRotate.style.transform = `translate3d(${x}px, ${y}px, 0) scale(${scale})`
+      this.$refs.middleRotate.addEventListener('transitionend', done)
+      // let animates = {
+      //   '0%': {
+      //     translate: [0, 0],
+      //     scale: 1
+      //   },
+      //   '100%': {
+      //     translate: [x, y],
+      //     scale: scale
+      //   }
+      // }
+      // animations.registerAnimation({
+      //   name: 'move',
+      //   animation: animates,
+      //   presets: {
+      //     duration: 400,
+      //     easing: 'linear'
+      //   }
+      // })
+      // animations.runAnimation(this.$refs.middleRotate, 'move', done)
+    },
+    afterLeave() {
+      // animations.unregisterAnimation('move')
+      this.$refs.middleRotate.style = ''
+      console.log('afterLeave')
+    },
+    getMiniPosAndScale() {
+      let deviceWidth = ww.width
+      let deviceHeight = ww.height
+      const targetWidth = 40
+      const paddingLeft = 20
+      const marginTop = 80
+      const marginBottom = 30
+      const normalWidth = deviceWidth * 0.8
+      let x = targetWidth / 2 + paddingLeft - (deviceWidth / 2)
+
+      let y = deviceHeight - marginTop - normalWidth / 2 - marginBottom
+      let scale = targetWidth / normalWidth
+      return {x, y, scale}
     }
   }
 }
@@ -113,20 +198,20 @@ export default {
 <style lang="stylus" scoped>
 @import "~common/stylus/variable.styl"
 .page
-  &.normal-enter, .normal-leave-to
-    opacity 0
+  .normal-enter, .normal-leave-to
+    opacity: 0
     .top
       transform: translateY(-100px)
     .bottom
       transform: translateY(100px)
-  &.normal-enter-active, .normal-leave-active
-    transition all .4s
+  .normal-enter-active, .normal-leave-active
+    transition all 4s ease-out
     .top, .bottom
-      transition all .4s cubic-bezier(0.86, 0.18, 0.82, 1.32);
-  &.mini-enter, .mini-leave-to
+      transition all 4s cubic-bezier(0.86, 0.18, 0.82, 1.32);
+  .mini-enter, .mini-leave-to
     opacity 0
-  &.mini-enter-active, .mini-leave-active
-    transition all 3s
+  .mini-enter-active, .mini-leave-active
+    transition all .4s
 .normal-player
   position: absolute
   top 0
