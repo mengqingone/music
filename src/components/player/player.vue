@@ -37,7 +37,7 @@
             <div class='dot'></div>
           </div>
           <div class='bottom-process'>
-            <span class='time time-l'>0:00</span>
+            <span class='time time-l'>{{formatTime(currentTime)}}</span>
             <div class='process-bar'>
               <div class='process-track'>
                 <div class='process-btn'>
@@ -45,7 +45,7 @@
                 </div>
               </div>
             </div>
-            <span class='time time-r'>5:00</span>
+            <span class='time time-r'>{{formatTime(this.totalTime)}}</span>
           </div>
           <div class='bottom-control' >
             <div class='icon icon-left'>
@@ -86,6 +86,8 @@
             ref="audio"
             @playing="ready"
             @error="error"
+            @timeupdate="getCurrentTime"
+            @loadeddata="loadeddata"
             autoplay>
       Your browser does not support the <code>audio</code> element.
     </audio>
@@ -103,7 +105,9 @@ export default {
       name: 'musicPlay',
       showList: false,
       songReady: false,
-      timer: null
+      timer: null,
+      currentTime: '',
+      totalTime: ''
     }
   },
   computed: {
@@ -139,7 +143,6 @@ export default {
     playingState(val) {
       if (val) {
         if (this.$refs.audio && this.$refs.audio.src) {
-          console.log('play')
           this.$refs.audio.play()
         }
       } else {
@@ -156,6 +159,9 @@ export default {
       setPlayingState: 'SET_PLAYINGSTATE',
       setCurrentIndex: 'SET_CURRENTINDEX'
     }),
+    getCurrentTime(e) {
+      this.currentTime = e.target.currentTime
+    },
     getUrlAgain() {
       this.setPlayingState(false)
       let songCopy = Object.assign({}, this.currentSong)
@@ -174,6 +180,9 @@ export default {
           console.log(error)
         }
       )
+    },
+    loadeddata(e) {
+      this.totalTime = e.target.duration
     },
     ready() {
       this.songReady = true
@@ -290,6 +299,14 @@ export default {
       let y = deviceHeight - marginTop - normalWidth / 2 - marginBottom
       let scale = targetWidth / normalWidth
       return {x, y, scale}
+    },
+    formatTime(times, length = 2) {
+      let minutes = parseInt(times / 60)
+      let seconds = parseInt(times % 60)
+      if (seconds < 10) {
+        seconds = '0' + seconds
+      }
+      return minutes + ':' + seconds
     }
   }
 }
