@@ -19,6 +19,9 @@ const getters = {
   },
   getCurrentSong: state => {
     return state.playList[state.currentIndex] || null
+  },
+  getCurrentIndex: state => {
+    return state.currentIndex
   }
 }
 

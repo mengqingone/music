@@ -105,7 +105,6 @@ export default {
   },
   mounted() {
     this.scrollHeight = parseFloat(window.getComputedStyle(this.$refs.bgImg, null).getPropertyValue('padding-bottom'))
-    this.$refs.listBody.style.top = this.scrollHeight + 'px'
   }
 }
 </script>
@@ -166,12 +165,9 @@ export default {
           vertical-align: middle
           font-size: $font-size-small
   .list-body
-    position: absolute
-    top: 0
-    bottom: 0
-    left: 0
-    right: 0
+    position: relative
     width: 100%
+    height: 100%
     .layer
       height: 100%
       background-color: $color-background

@@ -47,18 +47,18 @@
             </div>
             <span class='time time-r'>5:00</span>
           </div>
-          <div class='bottom-control'>
+          <div class='bottom-control' >
             <div class='icon icon-left'>
               <div class='icon-sequence'></div>
             </div>
             <div class='icon icon-left-other'>
-              <div class='icon-prev'></div>
+              <div class='icon-prev' :class="{'disable':!songReady}" @click="prev"></div>
             </div>
             <div class='icon icon-middle'>
-              <div class='needsclick icon-play'></div>
+              <div class='needsclick' :class="[playingState? 'icon-pause': 'icon-play', {'disable':!songReady}]" @click.stop="controlToggle"></div>
             </div>
             <div class='icon'>
-              <div class='icon-next'></div>
+              <div class='icon-next' :class="{'disable':!songReady}" @click="next"></div>
             </div>
             <div class='icon'>
               <div class='icon-not-favorite'></div>
@@ -75,12 +75,20 @@
           <div class='mini-singer'>{{currentSong.singer}}</div>
         </div>
         <div class='mini-control'>
-          <div class='icon-play-mini'></div>
+          <div class='icon-play-mini' :class="playingState? 'icon-pause-mini': 'icon-play-mini'"  @click.stop="controlToggle"></div>
           <div class='icon-playlist'></div>
         </div>
       </div>
     </transition>
     <div class='music-list' v-show="!fullgreen && showList"></div>
+    <audio :src="currentUrl"
+            preload="auto"
+            ref="audio"
+            @playing="ready"
+            @error="error"
+            autoplay>
+      Your browser does not support the <code>audio</code> element.
+    </audio>
   </div>
 </template>
 
@@ -88,12 +96,14 @@
 import {mapGetters, mapMutations} from 'vuex'
 import ww from 'window-watcher'
 import animations from 'create-keyframe-animation'
-
+import {setUrl} from '@/common/js/song.js'
 export default {
   data() {
     return {
       name: 'musicPlay',
-      showList: false
+      showList: false,
+      songReady: false,
+      timer: null
     }
   },
   computed: {
@@ -101,13 +111,106 @@ export default {
       playingState: 'getPlaying',
       playList: 'getPlayList',
       fullgreen: 'getFullScreen',
-      currentSong: 'getCurrentSong'
-    })
+      currentSong: 'getCurrentSong',
+      currentIndex: 'getCurrentIndex'
+    }),
+    // 排除空的url
+    currentUrl() {
+      if (this.currentSong.url) {
+        return this.currentSong.url
+      }
+    }
+  },
+  watch: {
+    currentSong(val) {
+      let _this = this
+      this.songReady = false
+      if (this.timer) {
+        clearTimeout(this.timer)
+        this.timer = null
+      }
+      this.timer = setTimeout(function() {
+        _this.songReady = true
+      }, 1000)
+      if (!val.url) {
+        this.getUrlAgain()
+      }
+    },
+    playingState(val) {
+      if (val) {
+        if (this.$refs.audio && this.$refs.audio.src) {
+          console.log('play')
+          this.$refs.audio.play()
+        }
+      } else {
+        if (this.$refs.audio) {
+          this.$refs.audio.pause()
+        }
+      }
+    }
   },
   methods: {
     ...mapMutations({
-      setFullScreen: 'SET_FULLSCREEN'
+      setFullScreen: 'SET_FULLSCREEN',
+      setCurrentSong: 'SET_CURRENTSONG',
+      setPlayingState: 'SET_PLAYINGSTATE',
+      setCurrentIndex: 'SET_CURRENTINDEX'
     }),
+    getUrlAgain() {
+      this.setPlayingState(false)
+      let songCopy = Object.assign({}, this.currentSong)
+      setUrl(songCopy).then(
+        () => {
+          this.setCurrentSong(songCopy)
+          this.setPlayingState(true)
+          // 付费歌曲,获取不到url
+          if (!this.currentSong.url) {
+            alert('付费歌曲')
+            this.songReady = true
+            this.setPlayingState(false)
+          }
+        },
+        function(error) {
+          console.log(error)
+        }
+      )
+    },
+    ready() {
+      this.songReady = true
+    },
+    error(e) {
+      this.songReady = true
+      console.log(e.target.error)
+    },
+    next() {
+      if (!this.songReady) {
+        return
+      }
+      let index = this.currentIndex + 1
+      if (index >= this.playList.length) {
+        index = 0
+      }
+      this.setCurrentIndex(index)
+      if (!this.playingState) {
+        this.controlToggle()
+      }
+    },
+    prev() {
+      if (!this.songReady) {
+        return
+      }
+      let index = this.currentIndex - 1
+      if (index === -1) {
+        index = this.playList.length - 1
+      }
+      this.setCurrentIndex(index)
+      if (!this.playingState) {
+        this.controlToggle()
+      }
+    },
+    controlToggle() {
+      this.setPlayingState(!this.playingState)
+    },
     turnMiniPlayer() {
       this.setFullScreen(false)
     },
@@ -115,7 +218,6 @@ export default {
       this.setFullScreen(true)
     },
     enter(el, done) {
-      console.log('enter door')
       let {x, y, scale} = this.getMiniPosAndScale()
       let animates = {
         '0%': {
@@ -139,19 +241,18 @@ export default {
           easing: 'linear'
         }
       })
-      console.log('enter')
       animations.runAnimation(this.$refs.middleRotate, 'move', done)
     },
     afterEnter() {
       animations.unregisterAnimation('move')
       this.$refs.middleRotate.style = ''
-      console.log('afterEnter')
     },
     leave(el, done) {
       let {x, y, scale} = this.getMiniPosAndScale()
       this.$refs.middleRotate.style.transition = 'all .4s'
       this.$refs.middleRotate.style.transform = `translate3d(${x}px, ${y}px, 0) scale(${scale})`
       this.$refs.middleRotate.addEventListener('transitionend', done)
+      // 方法2
       // let animates = {
       //   '0%': {
       //     translate: [0, 0],
@@ -175,7 +276,6 @@ export default {
     afterLeave() {
       // animations.unregisterAnimation('move')
       this.$refs.middleRotate.style = ''
-      console.log('afterLeave')
     },
     getMiniPosAndScale() {
       let deviceWidth = ww.width
@@ -363,6 +463,8 @@ export default {
         font-size 30px
         line-height 40px
         color #ffcd32
+        .disable
+          color:rgba(255,205,49,.5)
       .icon-left
         text-align right
       .icon-left-other
@@ -371,6 +473,7 @@ export default {
         font-size: 40px
         padding: 0 20px
         text-align center
+
 .mini-player
   position: fixed
   display: flex

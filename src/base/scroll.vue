@@ -43,7 +43,6 @@ export default {
         return
       }
       this.scroll = new BScroll(this.$refs.wrapper, {
-        // 没有解决chrome报错的问题
         preventDefault: false,
         scrollY: true,
         scrollX: false,

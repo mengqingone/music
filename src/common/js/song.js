@@ -34,7 +34,7 @@ export function createSong(obj) {
   return new Song(songid, songmid, singer, songname, albumid, albummid, albumname, duration, image, url)
 }
 
-export function setSongUrl(song) {
+export function setUrl(song) {
   let songmid = song.songmid
   return new Promise(function (resolve, reject) {
     getSongUrl(songmid, 'C400' + songmid + '.m4a').then(
@@ -42,12 +42,13 @@ export function setSongUrl(song) {
         let songinfo = res.data
         if (songinfo && songinfo.items && songinfo.items.length) {
           let vkey = songinfo.items[0].vkey
-          song.url = `http://dl.stream.qqmusic.qq.com/C400${songmid}.m4a?vkey=${vkey}&guid=1819638027&uin=0&fromtag=66`
+          if (vkey !== '') {
+            song.url = `http://dl.stream.qqmusic.qq.com/C400${songmid}.m4a?vkey=${vkey}&guid=${res.guid}&uin=0&fromtag=38`
+          }
         }
         resolve()
       },
       (err) => {
-        console.log(err)
         reject(err)
       }
     )

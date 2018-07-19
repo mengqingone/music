@@ -14,7 +14,6 @@ const actions = {
     // 设置播放下标
     commit(types.SET_CURRENTINDEX, index)
   }
-
 }
 
 export default actions

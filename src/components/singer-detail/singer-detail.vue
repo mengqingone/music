@@ -10,7 +10,7 @@
 <script>
 import {mapGetters} from 'vuex'
 import {getSongList} from '@/api/singer.js'
-import {createSong, setSongUrl} from '@/common/js/song.js'
+import {createSong, setUrl} from '@/common/js/song.js'
 import musicList from '@/components/music-list/music-list'
 export default {
   data() {
@@ -61,7 +61,7 @@ export default {
   methods: {
     adjustList(list, i) {
       if (i < list.length) {
-        setSongUrl(list[i]).then(() => {
+        setUrl(list[i]).then(() => {
           this.adjustList(list, i + 1)
         })
       }

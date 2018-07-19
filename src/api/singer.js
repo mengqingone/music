@@ -1,6 +1,8 @@
 import jsonp from 'common/js/jsonp'
 import {commondata, options} from './config'
 import axios from 'axios'
+let guid = ''
+
 export function getSingerList() {
   const url = 'https://c.y.qq.com/v8/fcg-bin/v8.fcg'
   let date = Object.assign({}, commondata, {
@@ -36,10 +38,16 @@ export function getSongList(singerId) {
   })
 }
 
+function getGuid() {
+  if (guid === '') {
+    let dat = new Date()
+    let t = (dat).getUTCMilliseconds()
+    guid = Math.round(2147483647 * Math.random()) * t % 10000000000
+  }
+  return guid
+}
+
 export function getSongUrl(songmid, filename) {
-  let dat = new Date()
-  let t = (dat).getUTCMilliseconds()
-  let _guid = Math.round(2147483647 * Math.random()) * t % 10000000000
   let data = Object.assign({},
     commondata,
     {
@@ -47,7 +55,7 @@ export function getSongUrl(songmid, filename) {
       'needNewCode': 1,
       'songmid': songmid,
       'filename': filename,
-      'guid': _guid,
+      'guid': getGuid(),
       'format': 'json',
       'cid': 205361747
     })

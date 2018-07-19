@@ -26,6 +26,16 @@ const mutations = {
   },
   [types.SET_CURRENTINDEX](state, idx) {
     state.currentIndex = idx
+  },
+  [types.SET_CURRENTSONG](state, currentSong) {
+    if (state.playList && state.playList[state.currentIndex]) {
+      state.playList[state.currentIndex].url = currentSong.url
+    }
+    state.sequenceList.forEach(element => {
+      if (element.songid === currentSong.songid) {
+        element.url = currentSong.url
+      }
+    })
   }
 }
 
