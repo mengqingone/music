@@ -28,7 +28,7 @@ export function createSong(obj) {
   let albumid = obj.albumid
   let albummid = obj.albummid
   let albumname = obj.albumname
-  let duration = obj.size128
+  let duration = obj.interval
   let image = `https://y.gtimg.cn/music/photo_new/T002R300x300M000${obj.albummid}.jpg`
   let url = ''
   return new Song(songid, songmid, singer, songname, albumid, albummid, albumname, duration, image, url)

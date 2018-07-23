@@ -38,14 +38,8 @@
           </div>
           <div class='bottom-process'>
             <span class='time time-l'>{{formatTime(currentTime)}}</span>
-            <div class='process-bar'>
-              <div class='process-track'>
-                <div class='process-btn'>
-                  <div class='btn-center'></div>
-                </div>
-              </div>
-            </div>
-            <span class='time time-r'>{{formatTime(this.totalTime)}}</span>
+            <process-bar :persent="persent" @percentChanging="changeProcess"></process-bar>
+            <span class='time time-r'>{{formatTime(currentSong.duration)}}</span>
           </div>
           <div class='bottom-control' >
             <div class='icon icon-left'>
@@ -86,9 +80,10 @@
             ref="audio"
             @playing="ready"
             @error="error"
-            @timeupdate="getCurrentTime"
-            @loadeddata="loadeddata"
-            autoplay>
+            @timeupdate="timeUpdate"
+            @seeked ="seeked"
+            autoplay
+            volume=0.00001>
       Your browser does not support the <code>audio</code> element.
     </audio>
   </div>
@@ -99,16 +94,19 @@ import {mapGetters, mapMutations} from 'vuex'
 import ww from 'window-watcher'
 import animations from 'create-keyframe-animation'
 import {setUrl} from '@/common/js/song.js'
+import processBar from '@/base/process-bar'
 export default {
   data() {
     return {
       name: 'musicPlay',
       showList: false,
       songReady: false,
-      timer: null,
-      currentTime: '',
-      totalTime: ''
+      currentTime: ''
+      // moveStart: false
     }
+  },
+  components: {
+    processBar
   },
   computed: {
     ...mapGetters({
@@ -123,6 +121,9 @@ export default {
       if (this.currentSong.url) {
         return this.currentSong.url
       }
+    },
+    persent() {
+      return this.currentTime / this.currentSong.duration
     }
   },
   watch: {
@@ -159,8 +160,12 @@ export default {
       setPlayingState: 'SET_PLAYINGSTATE',
       setCurrentIndex: 'SET_CURRENTINDEX'
     }),
-    getCurrentTime(e) {
+    timeUpdate(e) {
       this.currentTime = e.target.currentTime
+    },
+    seeked() {
+      this.$refs.audio.play()
+      this.setPlayingState(true)
     },
     getUrlAgain() {
       this.setPlayingState(false)
@@ -180,9 +185,6 @@ export default {
           console.log(error)
         }
       )
-    },
-    loadeddata(e) {
-      this.totalTime = e.target.duration
     },
     ready() {
       this.songReady = true
@@ -300,13 +302,16 @@ export default {
       let scale = targetWidth / normalWidth
       return {x, y, scale}
     },
-    formatTime(times, length = 2) {
+    formatTime(times) {
       let minutes = parseInt(times / 60)
       let seconds = parseInt(times % 60)
       if (seconds < 10) {
         seconds = '0' + seconds
       }
       return minutes + ':' + seconds
+    },
+    changeProcess(persent) {
+      this.$refs.audio.currentTime = this.currentSong.duration * persent
     }
   }
 }
@@ -438,39 +443,6 @@ export default {
         width: 30px
         height: 30px
         line-height: 30px
-      .process-bar
-        position relative
-        width: 80%
-        height: 30px
-        .process-track
-          position absolute
-          top: 50%
-          left: 5%
-          z-index 1
-          margin-top: -2px
-          width: 90%
-          height: 4px
-          background-color rgba(0,0,0,.3);
-      .process-btn
-        position: absolute
-        z-index 10
-        left: 0
-        top: 50%
-        margin-top: -8px
-        width: 16px
-        height: 16px
-        border-radius 16px
-        background-color white
-        .btn-center
-          position absolute
-          width: 10px
-          height: 10px
-          top:50%
-          left:50%
-          margin-left: -5px
-          margin-top: -5px
-          border-radius 10px
-          background-color yellow
     .bottom-control
       display: flex
       justify-content center
