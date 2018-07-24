@@ -38,7 +38,7 @@
           </div>
           <div class='bottom-process'>
             <span class='time time-l'>{{formatTime(currentTime)}}</span>
-            <process-bar :persent="persent" @percentChanging="changeProcess"></process-bar>
+            <process-bar :percent="percent" @percentChanging="changeProcess"></process-bar>
             <span class='time time-r'>{{formatTime(currentSong.duration)}}</span>
           </div>
           <div class='bottom-control' >
@@ -69,7 +69,9 @@
           <div class='mini-singer'>{{currentSong.singer}}</div>
         </div>
         <div class='mini-control'>
-          <div class='icon-play-mini' :class="playingState? 'icon-pause-mini': 'icon-play-mini'"  @click.stop="controlToggle"></div>
+          <process-circle :percent="percent" :circleDiameter="circleDiameter">
+            <div class='play-mini' :class="playingState? 'icon-pause-mini': 'icon-play-mini'" ></div>
+          </process-circle>
           <div class='icon-playlist'></div>
         </div>
       </div>
@@ -95,18 +97,20 @@ import ww from 'window-watcher'
 import animations from 'create-keyframe-animation'
 import {setUrl} from '@/common/js/song.js'
 import processBar from '@/base/process-bar'
+import processCircle from '@/base/process-circle'
 export default {
   data() {
     return {
       name: 'musicPlay',
       showList: false,
       songReady: false,
-      currentTime: ''
-      // moveStart: false
+      currentTime: '',
+      circleDiameter: 34
     }
   },
   components: {
-    processBar
+    processBar,
+    processCircle
   },
   computed: {
     ...mapGetters({
@@ -122,7 +126,7 @@ export default {
         return this.currentSong.url
       }
     },
-    persent() {
+    percent() {
       return this.currentTime / this.currentSong.duration
     }
   },
@@ -310,8 +314,8 @@ export default {
       }
       return minutes + ':' + seconds
     },
-    changeProcess(persent) {
-      this.$refs.audio.currentTime = this.currentSong.duration * persent
+    changeProcess(percent) {
+      this.$refs.audio.currentTime = this.currentSong.duration * percent
     }
   }
 }
