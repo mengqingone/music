@@ -8,7 +8,7 @@
         <div class='bg-blur'></div>
         <div class='play-btn'
             v-show="!reduceHeight && songs.length">
-          <div class='play'>
+          <div class='play' @click="randomPlay">
             <i class='icon-play'></i>
             <span>随机播放全部</span>
           </div>
@@ -78,7 +78,8 @@ export default {
   },
   methods: {
     ...mapActions([
-      'playMusic'
+      'playMusic',
+      'randomPlayMusic'
     ]),
     scroll(e) {
       let layerDom = this.$refs.layer
@@ -101,6 +102,9 @@ export default {
     },
     playSong(index) {
       this.playMusic({songlist: this.songs, index})
+    },
+    randomPlay() {
+      this.randomPlayMusic({songlist: this.songs})
     }
   },
   mounted() {

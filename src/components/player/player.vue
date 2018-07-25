@@ -43,7 +43,7 @@
           </div>
           <div class='bottom-control' >
             <div class='icon icon-left'>
-              <div class='icon-sequence'></div>
+              <div :class="currentMode" @click="changeMode"></div> <!--class='icon-sequence'-->
             </div>
             <div class='icon icon-left-other'>
               <div class='icon-prev' :class="{'disable':!songReady}" @click="prev"></div>
@@ -69,7 +69,9 @@
           <div class='mini-singer'>{{currentSong.singer}}</div>
         </div>
         <div class='mini-control'>
-          <process-circle :percent="percent" :circleDiameter="circleDiameter">
+          <process-circle :percent="percent"
+                          :circleDiameter="circleDiameter"
+                          @controlToggle="controlToggle">
             <div class='play-mini' :class="playingState? 'icon-pause-mini': 'icon-play-mini'" ></div>
           </process-circle>
           <div class='icon-playlist'></div>
@@ -84,8 +86,7 @@
             @error="error"
             @timeupdate="timeUpdate"
             @seeked ="seeked"
-            autoplay
-            volume=0.00001>
+                autoplay>
       Your browser does not support the <code>audio</code> element.
     </audio>
   </div>
@@ -98,6 +99,8 @@ import animations from 'create-keyframe-animation'
 import {setUrl} from '@/common/js/song.js'
 import processBar from '@/base/process-bar'
 import processCircle from '@/base/process-circle'
+import playMode from '@/common/js/config.js'
+import {randomList} from '@/common/js/random.js'
 export default {
   data() {
     return {
@@ -118,7 +121,9 @@ export default {
       playList: 'getPlayList',
       fullgreen: 'getFullScreen',
       currentSong: 'getCurrentSong',
-      currentIndex: 'getCurrentIndex'
+      currentIndex: 'getCurrentIndex',
+      sequenceList: 'getSequenceList',
+      mode: 'getMode'
     }),
     // 排除空的url
     currentUrl() {
@@ -128,10 +133,22 @@ export default {
     },
     percent() {
       return this.currentTime / this.currentSong.duration
+    },
+    currentMode() {
+      if (this.mode === playMode.sequence) {
+        return 'icon-sequence'
+      } else if (this.mode === playMode.loop) {
+        return 'icon-loop'
+      } else {
+        return 'icon-random'
+      }
     }
   },
   watch: {
-    currentSong(val) {
+    currentSong(val, old) {
+      if (old && (val.songid === old.songid)) {
+        return
+      }
       let _this = this
       this.songReady = false
       if (this.timer) {
@@ -141,7 +158,7 @@ export default {
       this.timer = setTimeout(function() {
         _this.songReady = true
       }, 1000)
-      if (!val.url) {
+      if (val.url === null || val.url === '') {
         this.getUrlAgain()
       }
     },
@@ -162,7 +179,9 @@ export default {
       setFullScreen: 'SET_FULLSCREEN',
       setCurrentSong: 'SET_CURRENTSONG',
       setPlayingState: 'SET_PLAYINGSTATE',
-      setCurrentIndex: 'SET_CURRENTINDEX'
+      setCurrentIndex: 'SET_CURRENTINDEX',
+      setCurrentMode: 'SET_MODE',
+      setPlaylist: 'SET_PLAYLIST'
     }),
     timeUpdate(e) {
       this.currentTime = e.target.currentTime
@@ -192,6 +211,7 @@ export default {
     },
     ready() {
       this.songReady = true
+      this.$refs.audio.volume = 0.1 // 控制音量
     },
     error(e) {
       this.songReady = true
@@ -316,6 +336,31 @@ export default {
     },
     changeProcess(percent) {
       this.$refs.audio.currentTime = this.currentSong.duration * percent
+    },
+    changeMode() {
+      this.setCurrentMode((this.mode + 1) % 3)
+      let song = this.currentSong
+      let list = null
+      if (this.mode === playMode.random) {
+        list = this.randomPlayList()
+      } else {
+        list = this.sequenceList
+      }
+      this.resetCurrentSong(list, song)
+      this.setPlaylist(list)
+    },
+    randomPlayList() {
+      let randomlist = randomList(this.playList)
+      return randomlist
+    },
+    resetCurrentSong(list, song) {
+      let index = list.findIndex(function(ele) {
+        return ele.songid === song.songid
+      })
+      if (index === -1) {
+        console.err('err')
+      }
+      this.setCurrentIndex(index)
     }
   }
 }

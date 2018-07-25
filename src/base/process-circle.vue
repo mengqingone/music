@@ -30,6 +30,12 @@ export default {
       const perimeter = 314
       this.$refs.highLayer.style.strokeDasharray = `${perimeter * val} ${(1 - val) * perimeter}`
     }
+  },
+
+  methods: {
+    controlToggle() {
+      this.$emit('controlToggle')
+    }
   }
 }
 </script>
