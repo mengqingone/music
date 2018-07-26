@@ -18,7 +18,7 @@
 <script>
 export default {
   props: {
-    persent: {
+    percent: {
       type: Number,
       default: 0
     }
@@ -42,7 +42,7 @@ export default {
     })
   },
   watch: {
-    persent(val) {
+    percent(val) {
       const BTN_LEN = 16
       if (!this.drag.dragStart && val >= 0) {
         let progress = val * (this.processTrackWidth - BTN_LEN)

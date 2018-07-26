@@ -27,13 +27,26 @@ const mutations = {
   [types.SET_CURRENTINDEX](state, idx) {
     state.currentIndex = idx
   },
-  [types.SET_CURRENTSONG](state, currentSong) {
-    if (state.playList && state.playList[state.currentIndex]) {
-      state.playList[state.currentIndex].url = currentSong.url
+  [types.SET_CURRENTSONG](state, url) {
+    let currentSong = state.playList[state.currentIndex]
+    if (state.playList && currentSong) {
+      currentSong.url = url
     }
     state.sequenceList.forEach(element => {
       if (element.songid === currentSong.songid) {
-        element.url = currentSong.url
+        element.url = url
+      }
+    })
+  },
+  [types.SET_CURRENTLYRIC](state, lyric) {
+    console.log('hello')
+    let currentSong = state.playList[state.currentIndex]
+    if (state.playList && currentSong) {
+      currentSong.lyric = lyric
+    }
+    state.sequenceList.forEach(element => {
+      if (element.songid === currentSong.songid) {
+        element.lyric = lyric
       }
     })
   }

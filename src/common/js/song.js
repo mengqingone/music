@@ -1,6 +1,6 @@
-import {getSongUrl} from '@/api/singer.js'
+import {getSongUrl} from '@/api/song.js'
 export class Song {
-  constructor(songid, songmid, singer, songname, albumid, albummid, albumname, duration, image, url) {
+  constructor(songid, songmid, singer, songname, albumid, albummid, albumname, duration, image, url, lyric) {
     this.songid = songid
     this.songmid = songmid
     this.singer = singer
@@ -11,6 +11,7 @@ export class Song {
     this.duration = duration
     this.image = image
     this.url = url
+    this.lyric = lyric
   }
 }
 
@@ -31,7 +32,8 @@ export function createSong(obj) {
   let duration = obj.interval
   let image = `https://y.gtimg.cn/music/photo_new/T002R300x300M000${obj.albummid}.jpg`
   let url = ''
-  return new Song(songid, songmid, singer, songname, albumid, albummid, albumname, duration, image, url)
+  let lyric = ''
+  return new Song(songid, songmid, singer, songname, albumid, albummid, albumname, duration, image, url, lyric)
 }
 
 export function setUrl(song) {

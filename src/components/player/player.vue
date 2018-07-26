@@ -20,15 +20,20 @@
           <div class='singer'>{{currentSong.singer}}</div>
         </div>
         <div class='middle'>
-          <div class='middle-rotate' ref='middleRotate'>
-            <div class='middle-Mask'>
-              <img class='middle-image' :src="currentSong.image">
+          <div class='middle-lf'>
+            <div class='middle-rotate' ref='middleRotate'>
+              <div class='middle-Mask'>
+                <img class='middle-image' :src="currentSong.image">
+              </div>
+            </div>
+            <div class='middle-songlyric'>
+              <div class='middle-lyric'>
+                {{currentSong.songname +'---------'+ currentSong.singer}}
+              </div>
             </div>
           </div>
-          <div class='middle-songlyric'>
-            <div class='middle-lyric'>
-              {{currentSong.songname +'---------'+ currentSong.singer}}
-            </div>
+          <div class='middle-rt'>
+            <lyric :song="currentSong"></lyric>
           </div>
         </div>
         <div class='bottom'>
@@ -86,7 +91,8 @@
             @error="error"
             @timeupdate="timeUpdate"
             @seeked ="seeked"
-                autoplay>
+            @ended="ended"
+            autoplay>
       Your browser does not support the <code>audio</code> element.
     </audio>
   </div>
@@ -101,19 +107,21 @@ import processBar from '@/base/process-bar'
 import processCircle from '@/base/process-circle'
 import playMode from '@/common/js/config.js'
 import {randomList} from '@/common/js/random.js'
+import lyric from './lyric'
 export default {
   data() {
     return {
       name: 'musicPlay',
       showList: false,
       songReady: false,
-      currentTime: '',
-      circleDiameter: 34
+      circleDiameter: 34,
+      currentTime: 0
     }
   },
   components: {
     processBar,
-    processCircle
+    processCircle,
+    lyric
   },
   computed: {
     ...mapGetters({
@@ -135,13 +143,8 @@ export default {
       return this.currentTime / this.currentSong.duration
     },
     currentMode() {
-      if (this.mode === playMode.sequence) {
-        return 'icon-sequence'
-      } else if (this.mode === playMode.loop) {
-        return 'icon-loop'
-      } else {
-        return 'icon-random'
-      }
+      return this.mode === playMode.sequence ? 'icon-sequence'
+        : this.mode === playMode.loop ? 'icon-loop' : 'icon-random'
     }
   },
   watch: {
@@ -151,6 +154,7 @@ export default {
       }
       let _this = this
       this.songReady = false
+      this.currentTime = 0
       if (this.timer) {
         clearTimeout(this.timer)
         this.timer = null
@@ -195,7 +199,7 @@ export default {
       let songCopy = Object.assign({}, this.currentSong)
       setUrl(songCopy).then(
         () => {
-          this.setCurrentSong(songCopy)
+          this.setCurrentSong(songCopy.url)
           this.setPlayingState(true)
           // 付费歌曲,获取不到url
           if (!this.currentSong.url) {
@@ -211,7 +215,7 @@ export default {
     },
     ready() {
       this.songReady = true
-      this.$refs.audio.volume = 0.1 // 控制音量
+      this.$refs.audio.volume = 0.02 // 控制音量
     },
     error(e) {
       this.songReady = true
@@ -321,7 +325,6 @@ export default {
       const marginBottom = 30
       const normalWidth = deviceWidth * 0.8
       let x = targetWidth / 2 + paddingLeft - (deviceWidth / 2)
-
       let y = deviceHeight - marginTop - normalWidth / 2 - marginBottom
       let scale = targetWidth / normalWidth
       return {x, y, scale}
@@ -340,12 +343,7 @@ export default {
     changeMode() {
       this.setCurrentMode((this.mode + 1) % 3)
       let song = this.currentSong
-      let list = null
-      if (this.mode === playMode.random) {
-        list = this.randomPlayList()
-      } else {
-        list = this.sequenceList
-      }
+      let list = this.mode === playMode.random ? this.randomPlayList() : this.sequenceList
       this.resetCurrentSong(list, song)
       this.setPlaylist(list)
     },
@@ -357,10 +355,16 @@ export default {
       let index = list.findIndex(function(ele) {
         return ele.songid === song.songid
       })
-      if (index === -1) {
-        console.err('err')
+      if (index !== -1) {
+        this.setCurrentIndex(index)
       }
-      this.setCurrentIndex(index)
+    },
+    ended() {
+      if (this.mode === playMode.loop) {
+        this.$refs.audio.currentTime = 0
+      } else {
+        this.next()
+      }
     }
   }
 }

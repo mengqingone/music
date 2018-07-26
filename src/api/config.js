@@ -5,11 +5,6 @@ export const commondata = {
   outCharset: 'utf-8',
   notice: 0,
   platform: 'yqq',
-  needNewCode: 0,
-  callback: 'getData'
-}
-export const options = {
-  param: 'jsonpCallback',
-  name: 'getData'
+  needNewCode: 0
 }
 export const ERROR_OK = 0
