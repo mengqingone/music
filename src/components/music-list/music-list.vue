@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class='musiclist-page'>
     <div class='image-header'>
       <div class='background-image'
             ref='bgImg'

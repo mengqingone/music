@@ -70,7 +70,7 @@ export default {
       this.drag.startLeft = parseFloat(this.$playedprogress.clientWidth)
     },
     touchEnd() {
-      this.$emit('percentChanging', this._getPercent())
+      this.$bus.$emit('jumpTo', this._getPercent())
       this.drag.dragStart = false
     },
     _getPercent() {
@@ -84,7 +84,7 @@ export default {
       let left = this.$processbar.getBoundingClientRect().left
       let _offsetWidth = Math.min(this.processTrackWidth - BTN_LEN, Math.max(0, pageX - left - BTN_LEN))
       this._offset(_offsetWidth)
-      this.$emit('percentChanging', this._getPercent())
+      this.$bus.$emit('jumpTo', this._getPercent())
     }
   }
 }

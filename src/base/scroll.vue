@@ -35,20 +35,18 @@ export default {
       default: false
     }
   },
-  components: {
-  },
   methods: {
     initBScroll() {
       if (!this.$refs.wrapper) {
         return
       }
       this.scroll = new BScroll(this.$refs.wrapper, {
-        preventDefault: false,
+        preventDefault: true,
         scrollY: true,
         scrollX: false,
         click: true,
         momentum: true,
-        freeScroll: true,
+        freeScroll: false,
         bounce: true,
         probeType: this.probeType
       })

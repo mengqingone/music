@@ -10,7 +10,7 @@ import store from '@/store/index.js'
 Vue.prototype.$ajax = axios
 Vue.config.productionTip = false
 fastClick.attach(document.body)
-
+Vue.prototype.$bus = new Vue()
 Vue.use(VueLazyload, {
   preLoad: 1.3,
   error: require('@/common/image/default.png'),

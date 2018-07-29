@@ -29,6 +29,14 @@
 </head>
 <body>
   <div id="app">
+      <div style="display:block">显示</div>
+      <div style="display:none;">隐藏不占位</div>
+
+      <div style="visibility:visible">显示</div>
+      <div style="visibility:hidden;">隐藏占位</div>
+
+      <div visible="true" runat="server">显示</div>
+      <div visible="false" runat="server">消失不占位</div>
     <transition
       v-on:before-enter="beforeEnter"
       v-on:enter="enter"

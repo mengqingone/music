@@ -39,7 +39,6 @@ const mutations = {
     })
   },
   [types.SET_CURRENTLYRIC](state, lyric) {
-    console.log('hello')
     let currentSong = state.playList[state.currentIndex]
     if (state.playList && currentSong) {
       currentSong.lyric = lyric
