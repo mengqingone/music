@@ -1,9 +1,10 @@
 <template>
   <div class="lyric-page" >
-    <scroll :listLength="listLength" v-if="listLength" class='wrapper'>
+    <scroll :listLength="lyricLength" v-if="lyricLength" class='wrapper' ref="scroll">
         <ul class='lyric-frame'>
           <li v-for="(line, index) in lyric.lines" :key="index"  class='lyric-line'
-            :class="[{'lyric-playing':playingLine === index}]">
+            :class="[{'lyric-playing':lyric.curLine  === index}]"
+            ref="lines">
           {{line.txt}}
           </li>
        </ul>
@@ -28,41 +29,51 @@ export default {
     return {
       name: 'lyric',
       lyric: '',
-      playingLine: 0
+      playingLine: 0,
+      currentTime: 0
     }
   },
   components: {
     scroll
+  },
+  created() {
+    this.$bus.$on('jumpLyric', this.handleJumpLyric)
+  },
+  beforeDestroy() {
+    this.$bus.$off('jumpLyric', this.handleJumpLyric)
   },
   computed: {
     ...mapGetters({
       song: 'getCurrentSong',
       playingState: 'getPlaying'
     }),
-    listLength() {
+    lyricLength() {
       return this.lyric && this.lyric.lines.length ? this.lyric.lines.length : 0
-    },
-    currentTime() {
-      return this.song.duration * this.percent || 0
     }
   },
   watch: {
+    percent(val) {
+      this.currentTime = this.song.duration * this.percent
+    },
     song(val) {
       this.getLyric()
     },
     playingState(val) {
       if (val && this.lyric) {
-        console.log('playingState' + this.currentTime)
-        this.seek(this.currentTime)
+        this.lyric.seek(this.currentTime * 1000)
       } else if (this.lyric) {
         this.lyric.togglePlay()
       }
     },
-    lyric(obj) {
+    lyric(curObj, oldObj) {
+      if (oldObj) {
+        oldObj.stop()
+      }
       if (this.playingState) {
-        this.currentTime = 0
-        this.seek(this.currentTime)
-        console.log(obj)
+        // 1秒后校准一下
+        setTimeout(() => {
+          this.lyric.seek(this.currentTime * 1000)
+        }, 1000)
       }
     }
   },
@@ -75,12 +86,6 @@ export default {
       setCurrentLyric: 'SET_CURRENTLYRIC',
       setFullScreen: 'SET_FULLSCREEN'
     }),
-    seek(times) {
-      let minutes = parseInt(times / 60)
-      let seconds = parseInt(times % 60)
-      let restT = times - minutes * 60 - seconds
-      this.lyric.seek(minutes * 1000 + seconds * 1000 + restT * 10)
-    },
     setLyric() {
       let _this = this
       getSongLyric(this.song.songmid).then(function(res) {
@@ -101,9 +106,16 @@ export default {
       return new Lyric(Base64.decode(lyricstr), handle)
     },
     handle({lineNum, txt}) {
-      console.log(lineNum)
-      console.log(txt)
-      this.playingLine = lineNum
+      let middleLine = 6
+      this.lyric.curLine = lineNum
+      if (lineNum < middleLine) {
+        this.$refs.scroll.scrollToElement(this.$refs.lines[0])
+      } else if (lineNum > middleLine && ((lineNum + middleLine - 1) < this.lyricLength)) {
+        this.$refs.scroll.scrollToElement(this.$refs.lines[lineNum - middleLine])
+      }
+    },
+    handleJumpLyric(time) {
+      this.lyric.seek(time * 1000)
     }
   }
 }

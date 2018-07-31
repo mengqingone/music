@@ -59,7 +59,6 @@ export default {
       if (this.timer) {
         clearTimeout(this.timer)
         this.timer = null
-        this.percent = 0
         this.$bus.$emit('makeToUnready')
       }
       // 超时的工作
@@ -101,43 +100,15 @@ export default {
       this.percent = percent
     },
     enter(el, done) {
-      if (this.showLyric) {
-        setTimeout(() => { done() }, 400)
-      }
       this.$refs.normalPlayer.enterAnimation(done)
     },
     afterEnter() {
       this.$refs.normalPlayer.afterEnter()
     },
     leave(el, done) {
-      if (this.showLyric) {
-        setTimeout(() => { done() }, 400)
-        return
-      }
       this.$refs.normalPlayer.leaveAnimation(done)
-      // 方法2
-      // let animates = {
-      //   '0%': {
-      //     translate: [0, 0],
-      //     scale: 1
-      //   },
-      //   '100%': {
-      //     translate: [x, y],
-      //     scale: scale
-      //   }
-      // }
-      // animations.registerAnimation({
-      //   name: 'move',
-      //   animation: animates,
-      //   presets: {
-      //     duration: 400,
-      //     easing: 'linear'
-      //   }
-      // })
-      // animations.runAnimation($middleRotate, 'move', done)
     },
     afterLeave() {
-      // animations.unregisterAnimation('move')
       this.$refs.normalPlayer.afterLeave()
     }
   }

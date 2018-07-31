@@ -86,6 +86,7 @@ export default {
       this._offset(_offsetWidth)
       this.$bus.$emit('jumpTo', this._getPercent())
     }
+
   }
 }
 </script>

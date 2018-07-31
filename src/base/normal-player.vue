@@ -26,7 +26,7 @@
         </div>
       </div>
       <div class='middle-rt' v-show="showLyric">
-        <!-- <lyric :percent="percent"></lyric> -->
+        <lyric :percent="percent"></lyric>
       </div>
     </div>
     <div class='bottom'>
@@ -69,11 +69,16 @@ import ww from 'window-watcher'
 import animations from 'create-keyframe-animation'
 
 export default {
-  props: ['percent'],
+  props: {
+    percent: {
+      type: Number,
+      default: 0
+    }
+  },
   data() {
     return {
       name: 'normal-player',
-      showLyric: false,
+      showLyric: true,
       songReady: false,
       currentTime: 0
     }
@@ -98,16 +103,19 @@ export default {
     }
   },
   created() {
-    this.$bus.$on('timeUpdate', this.handleTimeUpdate)
     this.$bus.$on('makeToReady', this.handleMakeReady)
     this.$bus.$on('makeToUnready', this.handleMakeUnReady)
     this.$bus.$on('toNext', this.next)
   },
   destroyed() {
-    this.$bus.$off('timeUpdate', this.handleTimeUpdate)
     this.$bus.$off('makeToReady', this.handleMakeReady)
     this.$bus.$off('makeToUnready', this.handleMakeUnReady)
     this.$bus.$off('toNext', this.next)
+  },
+  watch: {
+    percent(val) {
+      this.currentTime = val * this.currentSong.duration
+    }
   },
   methods: {
     ...mapMutations({
@@ -127,9 +135,6 @@ export default {
         seconds = '0' + seconds
       }
       return minutes + ':' + seconds
-    },
-    handleTimeUpdate(time) {
-      this.currentTime = time
     },
     handleMakeReady() {
       this.songReady = true
@@ -167,6 +172,7 @@ export default {
       }
       this.setCurrentIndex(index)
       this.$emit('setPercent', 0)
+      this.$bus.$emit('jumpLyric', 0)
       if (!this.playingState) {
         this.controlToggle()
       }
@@ -181,6 +187,7 @@ export default {
       }
       this.setCurrentIndex(index)
       this.$emit('setPercent', 0)
+      this.$bus.$emit('jumpLyric', 0)
       if (!this.playingState) {
         this.controlToggle()
       }
@@ -189,13 +196,41 @@ export default {
       this.setPlayingState(!this.playingState)
     },
     leaveAnimation(done) {
+      if (this.showLyric) {
+        setTimeout(() => { done() }, 400)
+        return
+      }
       let $middleRotate = this.$refs.middleRotate
       let {x, y, scale} = this.getMiniPosAndScale()
       $middleRotate.style.transition = 'all .4s'
       $middleRotate.style.transform = `translate3d(${x}px, ${y}px, 0) scale(${scale})`
       $middleRotate.addEventListener('transitionend', done)
+      // 方法2
+      // let animates = {
+      //   '0%': {
+      //     translate: [0, 0],
+      //     scale: 1
+      //   },
+      //   '100%': {
+      //     translate: [x, y],
+      //     scale: scale
+      //   }
+      // }
+      // animations.registerAnimation({
+      //   name: 'move',
+      //   animation: animates,
+      //   presets: {
+      //     duration: 400,
+      //     easing: 'linear'
+      //   }
+      // })
+      // animations.runAnimation($middleRotate, 'move', done)
     },
     enterAnimation(done) {
+      if (this.showLyric) {
+        setTimeout(() => { done() }, 400)
+        return
+      }
       let {x, y, scale} = this.getMiniPosAndScale()
       let animates = {
         '0%': {
@@ -243,7 +278,10 @@ export default {
       return {x, y, scale}
     },
     afterLeave() {
-      // animations.unregisterAnimation('move')
+      // 方法2
+      // if (animations.hasAnimation('move')) {
+      //   animations.unregisterAnimation('move')
+      // }
       let $middleRotate = this.$refs.middleRotate
       $middleRotate.style = ''
     }
@@ -328,12 +366,6 @@ export default {
         line-height 30px
         font-size: 14px
         color: hsla(0,0%,100%,.5)
-  .middle-rt
-    position: absolute
-    top 0
-    left 0
-    right 0
-    bottom 0
 .bottom
   position: absolute;
   bottom: 50px;

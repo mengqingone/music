@@ -68,7 +68,6 @@ export default {
     },
     timeUpdate(e) {
       let time = e.target.currentTime
-      this.$bus.$emit('timeUpdate', time)
       this.$emit('setPercent', time / this.currentSong.duration)
     },
     seeked() {
@@ -83,7 +82,9 @@ export default {
       }
     },
     handleJumpTo(percent) {
-      this.$refs.audio.currentTime = this.currentSong.duration * percent
+      let time = this.currentSong.duration * percent
+      this.$refs.audio.currentTime = time
+      this.$bus.$emit('jumpLyric', time)
     }
   }
 }
