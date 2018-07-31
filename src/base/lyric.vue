@@ -108,11 +108,16 @@ export default {
     handle({lineNum, txt}) {
       let middleLine = 6
       this.lyric.curLine = lineNum
+      // 得到歌词的时候 dom 还没有渲染完毕
+      if (!this.$refs.scroll) {
+        return
+      }
       if (lineNum < middleLine) {
         this.$refs.scroll.scrollToElement(this.$refs.lines[0])
       } else if (lineNum > middleLine && ((lineNum + middleLine - 1) < this.lyricLength)) {
         this.$refs.scroll.scrollToElement(this.$refs.lines[lineNum - middleLine])
       }
+      this.$emit('setCurrentLyric', txt)
     },
     handleJumpLyric(time) {
       this.lyric.seek(time * 1000)

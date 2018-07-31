@@ -60,7 +60,7 @@ export default {
     }),
     ready() {
       this.$bus.$emit('makeToReady')
-      this.$refs.audio.volume = 0.2 // 控制音量
+      this.$refs.audio.volume = 0.08 // 控制音量
     },
     error(e) {
       this.$bus.$emit('makeToReady')
@@ -77,6 +77,7 @@ export default {
     ended() {
       if (this.mode === playMode.loop) {
         this.$refs.audio.currentTime = 0
+        this.$bus.$emit('jumpLyric', 0)
       } else {
         this.$bus.$emit('toNext')
       }

@@ -13,21 +13,22 @@
       <div class='singer'>{{currentSong.singer}}</div>
     </div>
     <div class='middle'>
-      <div class='middle-lf'  v-show="!showLyric">
-        <div class='middle-rotate' ref='middleRotate'>
-          <div class='middle-Mask'>
-            <img class='middle-image' :src="currentSong.image">
+        <div class='middle-lf' v-show="!showLyric">
+          <div class='middle-rotate' ref='middleRotate'>
+            <div class='middle-Mask'>
+              <img class='middle-image' :src="currentSong.image">
+            </div>
+          </div>
+          <div class='middle-songlyric'>
+            <div class='middle-lyric'>
+              {{currentLyric}}
+            </div>
           </div>
         </div>
-        <div class='middle-songlyric'>
-          <div class='middle-lyric'>
-            {{currentSong.songname +'---------'+ currentSong.singer}}
-          </div>
+        <div class='middle-rt'
+            v-show="showLyric">
+          <lyric :percent="percent" @setCurrentLyric="setCurrentLyric"></lyric>
         </div>
-      </div>
-      <div class='middle-rt' v-show="showLyric">
-        <lyric :percent="percent"></lyric>
-      </div>
     </div>
     <div class='bottom'>
       <div class='bottom-pagedot'>
@@ -67,7 +68,6 @@ import processBar from '@/base/process-bar'
 import lyric from '@/base/lyric'
 import ww from 'window-watcher'
 import animations from 'create-keyframe-animation'
-
 export default {
   props: {
     percent: {
@@ -78,9 +78,10 @@ export default {
   data() {
     return {
       name: 'normal-player',
-      showLyric: true,
+      showLyric: false,
       songReady: false,
-      currentTime: 0
+      currentTime: 0,
+      currentLyric: ''
     }
   },
   components: {
@@ -166,13 +167,18 @@ export default {
       if (!this.songReady) {
         return
       }
-      let index = this.currentIndex + 1
-      if (index >= this.playList.length) {
-        index = 0
+      if (this.playList.length === 1) {
+        this.loop()
+      } else {
+        let index = this.currentIndex + 1
+        if (index >= this.playList.length) {
+          index = 0
+        }
+        this.setCurrentIndex(index)
       }
-      this.setCurrentIndex(index)
       this.$emit('setPercent', 0)
       this.$bus.$emit('jumpLyric', 0)
+
       if (!this.playingState) {
         this.controlToggle()
       }
@@ -181,16 +187,23 @@ export default {
       if (!this.songReady) {
         return
       }
-      let index = this.currentIndex - 1
-      if (index === -1) {
-        index = this.playList.length - 1
+      if (this.playList.length === 1) {
+        this.loop()
+      } else {
+        let index = this.currentIndex - 1
+        if (index === -1) {
+          index = this.playList.length - 1
+        }
+        this.setCurrentIndex(index)
       }
-      this.setCurrentIndex(index)
       this.$emit('setPercent', 0)
       this.$bus.$emit('jumpLyric', 0)
       if (!this.playingState) {
         this.controlToggle()
       }
+    },
+    loop() {
+      this.$bus.$emit('jumpTo', 0)
     },
     controlToggle() {
       this.setPlayingState(!this.playingState)
@@ -284,6 +297,9 @@ export default {
       // }
       let $middleRotate = this.$refs.middleRotate
       $middleRotate.style = ''
+    },
+    setCurrentLyric(lyric) {
+      this.currentLyric = lyric
     }
   }
 }
