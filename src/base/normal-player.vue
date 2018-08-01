@@ -12,8 +12,11 @@
       </div>
       <div class='singer'>{{currentSong.singer}}</div>
     </div>
-    <div class='middle'>
-        <div class='middle-lf' v-show="!showLyric">
+    <div  class='middle'
+          @touchstart.prevent="middleTouchStart"
+          @touchmove.prevent="middleTouchMove"
+          @touchend.prevent="middleTouchEnd">
+        <div class='middle-lf' ref="middleLf">
           <div class='middle-rotate' ref='middleRotate'>
             <div class='middle-Mask'>
               <img class='middle-image' :src="currentSong.image">
@@ -25,15 +28,14 @@
             </div>
           </div>
         </div>
-        <div class='middle-rt'
-            v-show="showLyric">
+        <div class='middle-rt' ref="middleRt">
           <lyric :percent="percent" @setCurrentLyric="setCurrentLyric"></lyric>
         </div>
     </div>
     <div class='bottom'>
       <div class='bottom-pagedot'>
-        <div class='dot dot-large'></div>
-        <div class='dot'></div>
+        <div class='dot' :class="middleShow === 'cd'? 'dot-large': ''"></div>
+        <div class='dot' :class="middleShow === 'lyric'? 'dot-large': ''"></div>
       </div>
       <div class='bottom-process'>
         <span class='time time-l'>{{formatTime(currentTime)}}</span>
@@ -78,10 +80,10 @@ export default {
   data() {
     return {
       name: 'normal-player',
-      showLyric: false,
       songReady: false,
       currentTime: 0,
-      currentLyric: ''
+      currentLyric: '',
+      middleShow: 'cd'
     }
   },
   components: {
@@ -104,6 +106,7 @@ export default {
     }
   },
   created() {
+    this.middleTouch = {}
     this.$bus.$on('makeToReady', this.handleMakeReady)
     this.$bus.$on('makeToUnready', this.handleMakeUnReady)
     this.$bus.$on('toNext', this.next)
@@ -209,7 +212,7 @@ export default {
       this.setPlayingState(!this.playingState)
     },
     leaveAnimation(done) {
-      if (this.showLyric) {
+      if (this.middleShow === 'lyric') {
         setTimeout(() => { done() }, 400)
         return
       }
@@ -240,7 +243,7 @@ export default {
       // animations.runAnimation($middleRotate, 'move', done)
     },
     enterAnimation(done) {
-      if (this.showLyric) {
+      if (this.middleShow === 'lyric') {
         setTimeout(() => { done() }, 400)
         return
       }
@@ -300,6 +303,81 @@ export default {
     },
     setCurrentLyric(lyric) {
       this.currentLyric = lyric
+    },
+    middleTouchStart(e) {
+      this.middleTouch.start = this.currentLyric ? 1 : 0
+      this.middleTouch.moved = false
+      let touches = e.touches[0]
+      this.middleTouch.startX = touches.pageX
+      this.middleTouch.startY = touches.pageY
+    },
+    middleTouchMove(e) {
+      if (!this.middleTouch.start) {
+        return
+      }
+      let touches = e.touches[0]
+      let deltaX = touches.pageX - this.middleTouch.startX
+      let deltaY = touches.pageY - this.middleTouch.startY
+      let distance = 0
+      if (Math.abs(deltaY) > Math.abs(deltaX)) {
+        return
+      }
+      if (!this.moved) {
+        this.moved = true
+      }
+      if (deltaX < 0 && this.middleShow === 'cd') {
+        distance = Math.max(deltaX, -1 * ww.width)
+      } else if (deltaX > 0 && this.middleShow === 'lyric') {
+        distance = Math.min(deltaX - ww.width, 0)
+      } else {
+        this.moved = false
+        return
+      }
+      let percent = 1 - Math.abs(distance) / ww.width
+      let $middleRt = this.$refs.middleRt
+      let $middleLf = this.$refs.middleLf
+      $middleRt.style.transform = `translate3d(${distance}px, 0, 0)`
+      $middleLf.style.opacity = `${percent}`
+      $middleLf.style.transition = $middleRt.style.transition = ''
+    },
+
+    _showLyric() {
+      let $middleRt = this.$refs.middleRt
+      let $middleLf = this.$refs.middleLf
+      $middleLf.style.opacity = 0
+      this.middleShow = 'lyric'
+      $middleRt.style.transform = `translate3d(${ww.width * -1}px, 0, 0)`
+      $middleRt.style.transition = $middleLf.style.transition = 'all 300ms linear'
+    },
+    _showCd() {
+      let $middleRt = this.$refs.middleRt
+      let $middleLf = this.$refs.middleLf
+      $middleLf.style.opacity = 1
+      this.middleShow = 'cd'
+      $middleRt.style.transform = `translate3d(0, 0, 0)`
+      $middleRt.style.transition = $middleLf.style.transition = 'all 300ms linear'
+    },
+    middleTouchEnd(e) {
+      if (!this.moved) {
+        return
+      }
+      let touches = e.changedTouches[0]
+      let deltaX = touches.pageX - this.middleTouch.startX
+      let percent = Math.abs(deltaX) / ww.width
+      if (percent > 0.1) {
+        if (this.middleShow === 'cd') {
+          this._showLyric()
+        } else {
+          this._showCd()
+        }
+      } else {
+        if (this.middleShow === 'cd') {
+          this._showCd()
+        } else {
+          this._showLyric()
+        }
+      }
+      this.middleTouch.start = false
     }
   }
 }
@@ -350,8 +428,11 @@ export default {
   left: 0
   right: 0
   white-space: nowrap;
-  z-index: 50
   .middle-lf
+    display inline-block
+    width: 100%
+    height: 100%
+    overflow: hidden;
     .middle-rotate
       position: relative
       margin 0 auto
@@ -368,8 +449,6 @@ export default {
         border: 10px solid hsla(0,0%,100%,.1);
         overflow hidden
         .middle-image
-          position: absolute
-          z-index -10
           width: 100%
           height: 100%
     .middle-songlyric
@@ -382,6 +461,12 @@ export default {
         line-height 30px
         font-size: 14px
         color: hsla(0,0%,100%,.5)
+  .middle-rt
+    position relative
+    display inline-block
+    width: 100%
+    height: 100%
+    overflow: hidden
 .bottom
   position: absolute;
   bottom: 50px;

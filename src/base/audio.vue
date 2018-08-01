@@ -58,9 +58,11 @@ export default {
     ...mapMutations({
       setPlayingState: 'SET_PLAYINGSTATE'
     }),
-    ready() {
+    ready(e) {
       this.$bus.$emit('makeToReady')
-      this.$refs.audio.volume = 0.08 // 控制音量
+      this.$refs.audio.volume = 0.5 // 控制音量
+      // 校准歌词
+      this.$bus.$emit('jumpLyric', e.target.currentTime)
     },
     error(e) {
       this.$bus.$emit('makeToReady')
@@ -85,6 +87,7 @@ export default {
     handleJumpTo(percent) {
       let time = this.currentSong.duration * percent
       this.$refs.audio.currentTime = time
+      // 校准歌词
       this.$bus.$emit('jumpLyric', time)
     }
   }
