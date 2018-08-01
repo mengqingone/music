@@ -2,7 +2,8 @@
   <div class="detail">
     <music-list :songs="songList"
                 :title="title"
-                :bg-image="bgImage">
+                :bg-image="bgImage"
+                >
     </music-list>
   </div>
 </template>
@@ -71,7 +72,6 @@ export default {
         this.songList.push(createSong(element.musicData))
       })
     }
-
   }
 }
 </script>

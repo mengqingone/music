@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <list-view :singerList='singerList' @detail="singerdetail"></list-view>
+  <div class="singer-page">
+    <list-view :singerList='singerList' @detail="singerdetail" ref="singerListView"></list-view>
     <transition name="slider">
       <router-view></router-view>
     </transition>
@@ -13,7 +13,9 @@ import { ERROR_OK } from '@/api/config.js'
 import Singer from '@/common/js/singer.js'
 import listView from '@/base/listView.vue'
 import { mapMutations } from 'vuex'
+import mixin from '@/api/mixin'
 export default {
+  mixins: [mixin],
   data() {
     return {
       name: 'singer',
@@ -79,6 +81,13 @@ export default {
     singerdetail(Singer) {
       this.setSinger(Singer)
       this.$router.push({path: `/singer/${Singer.id}`})
+    },
+    handlePlayList(list) {
+      if (list.length > 0) {
+        console.log('11')
+        this.$refs.singerListView.$el.style.bottom = '60px'
+        this.$refs.singerListView.refresh()
+      }
     }
   }
 }

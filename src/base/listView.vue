@@ -1,5 +1,5 @@
 <template>
-  <div class="singer-page">
+  <div class="listView-page">
     <scroll ref='scroll'
             class='wrapper'
             :listLength="singerList.length"
@@ -177,6 +177,9 @@ export default {
     },
     detail(item) {
       this.$emit('detail', item)
+    },
+    refresh() {
+      this.$refs.scroll.refresh()
     }
   }
 }
@@ -184,7 +187,7 @@ export default {
 
 <style lang="stylus" scoped>
 @import "~common/stylus/variable.styl"
-.singer-page
+.listView-page
   position fixed
   width: 100%
   top: 88px;

@@ -1,6 +1,6 @@
 <template>
-  <div class='recommend-page'>
-    <scroll :listLength="hotSongList.length" ref='scroll' class='wrapper'>
+  <div class='recommend-page' ref="recommendPage">
+    <scroll :listLength="hotSongList.length" ref="scroll" class='wrapper'>
       <div :class="[{'content-height': isloading }, 'content']">
         <div class='music-frame'>
           <slider v-if="this.imageList.length > 0" :imageList="imageList">
@@ -40,7 +40,9 @@ import { ERROR_OK } from '@/api/config.js'
 import slider from '@/base/slider'
 import scroll from '@/base/scroll'
 import loading from '@/base/loading/imageloading'
+import mixin from '@/api/mixin'
 export default {
+  mixins: [mixin],
   data() {
     return {
       name: 'recommend',
@@ -91,6 +93,12 @@ export default {
       }, function(err) {
         console.log(err)
       })
+    },
+    handlePlayList(list) {
+      if (list.length > 0) {
+        this.$refs.recommendPage.style.bottom = '60px'
+        this.$refs.scroll.refresh()
+      }
     }
   },
   components: {

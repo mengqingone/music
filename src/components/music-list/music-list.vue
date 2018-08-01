@@ -1,6 +1,6 @@
 <template>
   <div class='musiclist-page'>
-    <div class='image-header'>
+    <div class='image-list' ref="imagewithList">
       <div class='background-image'
             ref='bgImg'
             :class="{'bg-reduce':reduceHeight}">
@@ -43,7 +43,9 @@ import songList from '@/base/song-list'
 import scroll from '@/base/scroll'
 import loading from '@/base/loading/imageloading'
 import {mapActions} from 'vuex'
+import mixin from '@/api/mixin'
 export default {
+  mixins: [mixin],
   props: {
     bgImage: {
       type: String,
@@ -105,6 +107,12 @@ export default {
     },
     randomPlay() {
       this.randomPlayMusic({songlist: this.songs})
+    },
+    handlePlayList(list) {
+      if (list.length > 0) {
+        this.$refs.imagewithList.style.bottom = '60px'
+        this.$refs.songscroll.refresh()
+      }
     }
   },
   mounted() {
@@ -122,14 +130,12 @@ export default {
   height: 40px!important
   padding-bottom 0!important
   z-index: 10
-.image-header
+.image-list
   position fixed
   left 0
   right 0
   bottom 0
   top 0
-  width 100%
-  height 100%
   .background-image
     position: relative
     width: 100%
