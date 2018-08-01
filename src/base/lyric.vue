@@ -120,7 +120,9 @@ export default {
       this.$emit('setCurrentLyric', txt)
     },
     handleJumpLyric(time) {
-      this.lyric.seek(time * 1000)
+      if (this.lyric) {
+        this.lyric.seek(time * 1000)
+      }
     }
   }
 }

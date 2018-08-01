@@ -55,10 +55,9 @@ export default {
           this.hotSinger[0].items.push(new Singer(list[index]))
         }
         let prefix = list[index].Findex.replace(/\s+/g, '')
+        let isNumber = prefix.search(/[0-9]/) >= 0 ? 1 : 0
+        prefix = isNumber ? '#' : prefix
         if (prefixList.indexOf(prefix) === -1) {
-          if (prefix.search(/[0-9]/) >= 0) {
-            prefix = '#'
-          }
           prefixList.push(prefix)
           this.restSinger.push(this.creatListObject(prefix))
         }
