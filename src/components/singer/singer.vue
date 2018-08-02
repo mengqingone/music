@@ -84,7 +84,6 @@ export default {
     },
     handlePlayList(list) {
       if (list.length > 0) {
-        console.log('11')
         this.$refs.singerListView.$el.style.bottom = '60px'
         this.$refs.singerListView.refresh()
       }

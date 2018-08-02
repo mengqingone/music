@@ -20,6 +20,11 @@ const mixin = {
       }
     })
   },
+  watch: {
+    playList(val) {
+      this.handlePlayList(val)
+    }
+  },
   methods: {
     handlePlayList(playList) {
       throw new Error('could not find the function of handlePlayList')
