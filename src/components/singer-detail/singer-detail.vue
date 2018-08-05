@@ -1,11 +1,9 @@
 <template>
-  <div class="detail">
-    <music-list :songs="songList"
-                :title="title"
-                :bg-image="bgImage"
-                >
-    </music-list>
-  </div>
+  <music-list :songs="songList"
+              :title="title"
+              :bg-image="bgImage"
+              >
+  </music-list>
 </template>
 
 <script>
@@ -77,15 +75,4 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
-@import '~common/stylus/variable';
-.detail
-  position fixed
-  width: 100%
-  top: 0
-  bottom: 0
-  left: 0
-  right: 0
-  overflow hidden
-  z-index: 2
-  background: $color-background
 </style>

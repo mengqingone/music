@@ -11,7 +11,7 @@
 import { getSingerList } from '@/api/singer.js'
 import { ERROR_OK } from '@/api/config.js'
 import Singer from '@/common/js/singer.js'
-import listView from '@/base/listView.vue'
+import listView from '@/base/list-view.vue'
 import { mapMutations } from 'vuex'
 import mixin from '@/api/mixin'
 export default {

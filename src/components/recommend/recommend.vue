@@ -13,7 +13,10 @@
         </div>
         <div class='hot-song'>
           <div class='hot-title'>热门歌曲推荐</div>
-          <div class='hot-detail' v-for='(item, index) in hotSongList' :key='index'>
+          <div class='hot-detail'
+            v-for="(item, index) in hotSongList"
+            :key="index"
+            @click.stop.prevent="getHotSong(item)">
             <div class='hot-list'>
               <div class='hot-image'>
                 <img v-lazy="item.imgurl">
@@ -30,8 +33,8 @@
         </div>
       </div>
     </scroll>
+    <router-view></router-view>
   </div>
-
 </template>
 
 <script>
@@ -41,6 +44,7 @@ import slider from '@/base/slider'
 import scroll from '@/base/scroll'
 import loading from '@/base/loading/imageloading'
 import mixin from '@/api/mixin'
+import { mapMutations } from 'vuex'
 export default {
   mixins: [mixin],
   data() {
@@ -53,6 +57,9 @@ export default {
     }
   },
   watch: {
+    // $route(to, from) {
+    //   // 对路由变化作出响应...
+    // },
     loadOK(val, old) {
       if (val) {
         this.$refs.scroll.refresh()
@@ -72,6 +79,9 @@ export default {
     this._getRecommendList()
   },
   methods: {
+    ...mapMutations({
+      setDisc: 'SET_CURRENTDISC'
+    }),
     imageLoad() {
       this.loadOK = true
     },
@@ -99,6 +109,10 @@ export default {
         this.$refs.recommendPage.style.bottom = '60px'
         this.$refs.scroll.refresh()
       }
+    },
+    getHotSong(item) {
+      this.setDisc(item)
+      this.$router.push({path: `/recommend/${item.dissid}`})
     }
   },
   components: {
@@ -167,5 +181,4 @@ export default {
           top: 50%
           left: 50%
           transform : translateY(-50%) translateX(-50%)
-
 </style>

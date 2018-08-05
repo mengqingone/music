@@ -48,6 +48,9 @@ const mutations = {
         element.lyric = lyric
       }
     })
+  },
+  [types.SET_CURRENTDISC](state, disc) {
+    state.currentDisc = disc
   }
 }
 

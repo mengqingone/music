@@ -22,6 +22,9 @@ const getters = {
   },
   getCurrentIndex: state => {
     return state.currentIndex
+  },
+  getCurrentDisc: state => {
+    return state.currentDisc
   }
 }
 

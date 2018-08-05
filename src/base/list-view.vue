@@ -63,7 +63,12 @@ export default {
     }
   },
   props: {
-    singerList: Array
+    singerList: {
+      type: Array,
+      default: function() {
+        return []
+      }
+    }
   },
   components: {
     scroll,

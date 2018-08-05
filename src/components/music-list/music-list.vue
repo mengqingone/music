@@ -123,6 +123,14 @@ export default {
 
 <style lang="stylus" scoped>
 @import '~common/stylus/variable'
+.musiclist-page
+  position:fixed
+  top: 0
+  left 0
+  right 0
+  bottom 0
+  z-index: 10
+  background: $color-background
 .low-zindex
   z-index: -10
 .bg-reduce
