@@ -51,11 +51,10 @@ export default {
         if (songsList && songsList.length > 0) {
           this.buildList(songsList)
         }
-      },
-      (err) => {
-        console.log(err)
       }
-    )
+    ).catch((err) => {
+      console.log(err)
+    })
   },
   methods: {
     adjustList(list, i) {

@@ -2,12 +2,18 @@
   <div class='rank-page' ref="rankPage">
     <scroll class='wrapper' v-show="topList.length > 0" :listLength="topList.length" ref="scroll">
       <ul class='rank-list' >
-        <li v-for="(item, index) in topList" :key="index" class='rank-item'>
+        <li v-for="(item, index) in topList"
+            :key="index"
+            class='rank-item'
+            @click.prevent="openDetail(item)">
         <div class='rank-left'>
           <img class='rank-image' :src="item.pic_v12" alt="">
         </div>
         <ul class='rank-right'>
-          <li class='rank-right-item' v-for="(detail, idx) in item.songlist" v-if="idx < 3" :key="idx">
+          <li class='rank-right-item'
+            v-for="(detail, idx) in item.songlist"
+            v-if="idx < 3"
+            :key="idx">
             <span class='item-num'>{{idx}}</span>
             <span class='item-info'>{{detail.songname + "-"+ detail.singername}}</span>
           </li>
@@ -18,6 +24,7 @@
     <div class='loading' v-show="topList.length <= 0">
       <loading class='loading-inner'></loading>
     </div>
+    <router-view></router-view>
   </div>
 </template>
 
@@ -26,7 +33,7 @@ import {getTopList} from '@/api/rank.js'
 import scroll from '@/base/scroll'
 import mixin from '@/api/mixin'
 import loading from '@/base/loading/imageloading'
-// import {createSong, setUrl} from '@/common/js/song.js'
+import { mapMutations } from 'vuex'
 export default {
   mixins: [mixin],
   data() {
@@ -43,11 +50,13 @@ export default {
     this.getlist()
   },
   methods: {
+    ...mapMutations({
+      setRankItem: 'SET_RANK'
+    }),
     getlist() {
       getTopList().then((data) => {
         if (data && data.length && data[0].List) {
           this.topList = data[0].List.concat()
-          console.log(this.topList)
         }
       }).catch(function(err) {
         console.log(err)
@@ -55,10 +64,13 @@ export default {
     },
     handlePlayList(list) {
       if (list.length > 0 && this.$refs.rankPage) {
-        console.log('1')
         this.$refs.rankPage.style.bottom = '60px'
         this.$refs.scroll.refresh()
       }
+    },
+    openDetail(item) {
+      this.setRankItem(item)
+      this.$router.push({path: `/rank/${item.topID}`})
     }
   }
 }
@@ -79,8 +91,9 @@ export default {
       display flex
       flex-direction row
       justify-content flex-start
-      margin 20px
+      padding 10px 20px
       height 100px
+      line-height 100px
       overflow hidden
       .rank-left
         flex: 0 0 100px

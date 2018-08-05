@@ -51,6 +51,9 @@ const mutations = {
   },
   [types.SET_CURRENTDISC](state, disc) {
     state.currentDisc = disc
+  },
+  [types.SET_RANK](state, rank) {
+    state.rank = rank
   }
 }
 

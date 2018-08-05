@@ -1,5 +1,5 @@
 <template>
-  <div class='musiclist-page'>
+  <div class='ranksongs-page'>
     <div class='image-list' ref="imagewithList">
       <div class='background-image'
             ref='bgImg'
@@ -14,7 +14,7 @@
           </div>
         </div>
       </div>
-      <div class='list-body' ref='listBody' :class="{'low-zindex':reduceHeight}">
+      <div class='list-body' ref='listBody' v-show="songs.length" :class="{'low-zindex':reduceHeight}">
         <div class='layer' ref="layer"></div>
         <scroll :list-length="songs.length"
                 class='wrapper'
@@ -24,7 +24,9 @@
                 ref="songscroll">
           <song-list :s-list="songs" @play="playSong"></song-list>
         </scroll>
-        <div class='songs-loading' v-show="!songs.length">
+      </div>
+      <div class='songs-loading' v-show="!songs.length">
+        <div class="loading-outer">
           <loading class='loading-inner'></loading>
         </div>
       </div>
@@ -39,50 +41,83 @@
 </template>
 
 <script>
+import {mapGetters, mapActions} from 'vuex'
 import songList from '@/base/song-list'
 import scroll from '@/base/scroll'
 import loading from '@/base/loading/imageloading'
-import {mapActions} from 'vuex'
 import mixin from '@/api/mixin'
+import {getTopSongs} from '@/api/rank.js'
+import {createSong, setUrl} from '@/common/js/song.js'
+// songs
 export default {
   mixins: [mixin],
-  props: {
-    bgImage: {
-      type: String,
-      default: ''
-    },
-    songs: {
-      type: Array,
-      default: function() {
-        return []
-      }
-    },
-    title: {
-      type: String,
-      default: ''
-    }
-  },
   data() {
     return {
-      name: 'musicList',
+      name: 'rankSongs',
       listenScroll: true,
       probeType: 3,
       scrollHeight: 0,
       TitleHeight: 40,
       reduceHeight: false,
-      refreshed: false
+      refreshed: false,
+      songs: []
     }
+  },
+  computed: {
+    title () {
+      return this.rankItem.ListName
+    },
+    bgImage() {
+      if (this.songs && this.songs.length) {
+        return this.songs[0].image
+      }
+    },
+    ...mapGetters({
+      rankItem: 'getRankItem'
+    })
   },
   components: {
     songList,
     scroll,
     loading
   },
+  watch: {
+    songs(val) {
+      if (val.length > 0) {
+        this.adjustList(val, 0)
+      }
+    }
+  },
+  created() {
+    if (!this.rankItem || !this.rankItem.topID) {
+      this.$router.push('/rank')
+      return
+    }
+    getTopSongs(this.rankItem.topID, this.rankItem.update_key).then((res) => {
+      if (res.songlist && res.songlist.length > 0) {
+        this.buildList(res.songlist)
+      }
+    }).catch(function(err) {
+      console.log(err)
+    })
+  },
   methods: {
     ...mapActions([
       'playMusic',
       'randomPlayMusic'
     ]),
+    adjustList(list, i) {
+      if (i < list.length) {
+        setUrl(list[i]).then(() => {
+          this.adjustList(list, i + 1)
+        })
+      }
+    },
+    buildList(list) {
+      list.forEach(element => {
+        this.songs.push(createSong(element.data))
+      })
+    },
     scroll(e) {
       let layerDom = this.$refs.layer
       let bgImgDom = this.$refs.bgImg
@@ -102,6 +137,7 @@ export default {
     back() {
       this.$router.back()
     },
+
     playSong(index) {
       this.playMusic({songlist: this.songs, index})
     },
@@ -123,7 +159,7 @@ export default {
 
 <style lang="stylus" scoped>
 @import '~common/stylus/variable'
-.musiclist-page
+.ranksongs-page
   position:fixed
   top: 0
   left 0
@@ -198,20 +234,20 @@ export default {
       right: 0
       width: 100%
       height: 100%
-    .songs-loading
+  .songs-loading
+    position relative
+    width: 100%
+    .loading-outer
       position absolute
-      display flex
-      top: 0
-      left: 0
-      right: 0
-      bottom: 0
-      align-items center
-      justify-content center
+      left 0
+      right 0
+      top 0
+      bottom 0
       .loading-inner
-        position:absolute
+        position absolute
         top: 50%
         left: 50%
-        transform : translateY(-50%) translateX(-50%)
+        transform: translateY(-50%) translateX(-50%)
 .header-title
   position absolute
   width: 100%

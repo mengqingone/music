@@ -25,6 +25,9 @@ const getters = {
   },
   getCurrentDisc: state => {
     return state.currentDisc
+  },
+  getRankItem: state => {
+    return state.rank
   }
 }
 
