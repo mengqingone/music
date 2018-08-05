@@ -157,7 +157,9 @@ export default {
       }
     },
     getOffsetY(className) {
-      return document.getElementsByClassName(className)[0].offsetTop
+      if (document.getElementsByClassName(className)) {
+        return document.getElementsByClassName(className)[0].offsetTop
+      }
     },
 
     initPrefixRanges() {
