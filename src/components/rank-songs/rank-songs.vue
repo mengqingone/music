@@ -93,7 +93,7 @@ export default {
       this.$router.push('/rank')
       return
     }
-    getTopSongs(this.rankItem.topID, this.rankItem.update_key).then((res) => {
+    getTopSongs(this.rankItem.topID).then((res) => {
       if (res.songlist && res.songlist.length > 0) {
         this.buildList(res.songlist)
       }
@@ -110,7 +110,8 @@ export default {
       if (i < list.length) {
         setUrl(list[i]).then(() => {
           this.adjustList(list, i + 1)
-        })
+        }, err => console.log(err)
+        )
       }
     },
     buildList(list) {

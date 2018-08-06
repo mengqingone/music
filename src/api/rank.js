@@ -16,21 +16,21 @@ export function getTopList() {
   return jsonp(url, date, options)
 }
 
-export function getTopSongs(topid, date) {
+export function getTopSongs(topid) {
   const url = '/apis/v8/fcg-bin/fcg_v8_toplist_cp.fcg'
 
   let data = Object.assign({}, commondata, {
     tpl: 3,
     page: 'detail',
-    date: date,
     topid: topid,
     type: 'top',
-    song_begin: 0,
-    song_num: 30,
+    platform: 'h5',
     loginUin: 0,
     hostUin: 0,
-    format: 'jsonp',
-    notice: 0
+    format: 'json',
+    notice: 0,
+    needNewCode: 1,
+    uin: 0
   })
   let options = {
     param: 'jsonpCallback',

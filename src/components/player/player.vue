@@ -78,6 +78,7 @@ export default {
       setCurrentSong: 'SET_CURRENTSONG'
     }),
     getUrlAgain() {
+      let _this = this
       let songCopy = Object.assign({}, this.currentSong)
       setUrl(songCopy).then(
         () => {
@@ -90,8 +91,9 @@ export default {
             this.setPlayingState(false)
           }
         },
-        function(error) {
-          this.$bus.$emit('makeToReady')
+        error => {
+          console.log(_this)
+          _this.$bus.$emit('makeToReady')
           console.log(error)
         }
       )

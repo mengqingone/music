@@ -56,7 +56,8 @@ export default {
       if (i < list.length) {
         setUrl(list[i]).then(() => {
           this.adjustList(list, i + 1)
-        })
+        }, err => console.log(err)
+        )
       }
     },
     buildList(list) {
