@@ -3,7 +3,7 @@ import {commondata} from './config'
 
 export function getTopList() {
   const url = '/apis/v8/fcg-bin/fcg_v8_toplist_opt.fcg'
-  let date = Object.assign({}, commondata, {
+  let data = Object.assign({}, commondata, {
     page: 'index',
     format: 'html',
     tpl: 'macv4',
@@ -13,7 +13,7 @@ export function getTopList() {
   let options = {
     name: 'jsonCallback'
   }
-  return jsonp(url, date, options)
+  return jsonp(url, data, options)
 }
 
 export function getTopSongs(topid) {
@@ -30,7 +30,9 @@ export function getTopSongs(topid) {
     format: 'json',
     notice: 0,
     needNewCode: 1,
-    uin: 0
+    uin: 0,
+    song_begin: 0,
+    song_num: 50
   })
   let options = {
     param: 'jsonpCallback',

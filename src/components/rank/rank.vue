@@ -123,7 +123,6 @@ export default {
           white-space: nowrap
   .loading
     position absolute
-    flex: 1
     top: 0
     left 0
     right 0

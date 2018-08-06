@@ -67,6 +67,7 @@ export default {
       }, 1000)
 
       if (val.url === null || val.url === '') {
+        console.log(val)
         this.getUrlAgain()
       }
     }
@@ -92,7 +93,6 @@ export default {
           }
         },
         error => {
-          console.log(_this)
           _this.$bus.$emit('makeToReady')
           console.log(error)
         }

@@ -14,7 +14,9 @@
           </div>
         </div>
       </div>
-      <div class='list-body' ref='listBody' :class="{'low-zindex':reduceHeight}">
+      <div class='list-body' ref='listBody'
+            v-show="songs.length"
+            :class="{'low-zindex':reduceHeight}">
         <div class='layer' ref="layer"></div>
         <scroll :list-length="songs.length"
                 class='wrapper'
@@ -24,9 +26,9 @@
                 ref="songscroll">
           <song-list :s-list="songs" @play="playSong"></song-list>
         </scroll>
-        <div class='songs-loading' v-show="!songs.length">
-          <loading class='loading-inner'></loading>
-        </div>
+      </div>
+      <div class='songs-loading' v-show="!songs.length" ref="loading">
+        <loading class='loading-inner'></loading>
       </div>
     </div>
     <div class='header-title'>
@@ -117,6 +119,11 @@ export default {
   },
   mounted() {
     this.scrollHeight = parseFloat(window.getComputedStyle(this.$refs.bgImg, null).getPropertyValue('padding-bottom'))
+    this.$nextTick(() => {
+      let bgImgHeight = this.$refs.bgImg.clientHeight
+      let imagewithListHeight = this.$refs.imagewithList.clientHeight
+      this.$refs.loading.style.height = imagewithListHeight - bgImgHeight + 'px'
+    })
   }
 }
 </script>
@@ -198,20 +205,15 @@ export default {
       right: 0
       width: 100%
       height: 100%
-    .songs-loading
+  .songs-loading
+    position relative
+    width: 100%
+    height: 0
+    .loading-inner
       position absolute
-      display flex
-      top: 0
-      left: 0
-      right: 0
-      bottom: 0
-      align-items center
-      justify-content center
-      .loading-inner
-        position:absolute
-        top: 50%
-        left: 50%
-        transform : translateY(-50%) translateX(-50%)
+      top: 50%
+      left: 50%
+      transform: translateY(-50%) translateX(-50%)
 .header-title
   position absolute
   width: 100%
