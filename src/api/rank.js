@@ -1,5 +1,5 @@
 import jsonp from 'common/js/jsonp'
-import {commondata} from './config'
+import {commondata, options} from './config'
 
 export function getTopList() {
   const url = '/apis/v8/fcg-bin/fcg_v8_toplist_opt.fcg'
@@ -7,8 +7,7 @@ export function getTopList() {
     page: 'index',
     format: 'html',
     tpl: 'macv4',
-    v8debug: 1,
-    jsonCallback: 'jsonCallback'
+    v8debug: 1
   })
   let options = {
     name: 'jsonCallback'
@@ -32,11 +31,7 @@ export function getTopSongs(topid) {
     needNewCode: 1,
     uin: 0,
     song_begin: 0,
-    song_num: 50
+    song_num: 100
   })
-  let options = {
-    param: 'jsonpCallback',
-    name: 'MusicJsonCallbacktoplist'
-  }
   return jsonp(url, data, options)
 }

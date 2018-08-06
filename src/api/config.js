@@ -7,4 +7,9 @@ export const commondata = {
   platform: 'yqq',
   needNewCode: 0
 }
+export const options = {
+  param: 'jsonpCallback',
+  prefix: 'jp',
+  name: 'getData'
+}
 export const ERROR_OK = 0

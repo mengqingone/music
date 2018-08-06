@@ -1,5 +1,5 @@
 import jsonp from 'common/js/jsonp'
-import {commondata} from './config'
+import {commondata, options} from './config'
 import axios from 'axios'
 
 export function getSingerList() {
@@ -12,13 +12,8 @@ export function getSingerList() {
     pagenum: 3,
     hostUin: 0,
     needNewCode: 0,
-    platform: 'yqq',
-    callback: 'getListData'
+    platform: 'yqq'
   })
-  let options = {
-    param: 'jsonpCallback',
-    name: 'getListData'
-  }
   return jsonp(url, date, options)
 }
 

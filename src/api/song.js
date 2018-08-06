@@ -1,6 +1,6 @@
 
 import jsonp from 'common/js/jsonp'
-import {commondata} from './config'
+import {commondata, options} from './config'
 
 let guid = ''
 
@@ -21,14 +21,9 @@ export function getSongUrl(songmid, filename) {
       'songmid': songmid,
       'filename': filename,
       'guid': getGuid(),
-      'format': 'json',
       'cid': 205361747,
-      'callback': 'getSongUrl'
+      'callback': 'getData'
     })
-  let options = {
-    param: 'jsonpCallback',
-    name: 'getSongUrl'
-  }
   let url = '/apis/base/fcgi-bin/fcg_music_express_mobile3.fcg'
   return jsonp(url, data, options)
 }
@@ -37,12 +32,12 @@ export function getSongLyric(songmid) {
   let data = Object.assign({},
     commondata,
     {
-      'hostUin': 0,
-      'guid': getGuid(),
-      'songmid': songmid,
-      'format': 'jsonp',
-      'pcachetime': +new Date(),
-      'callback': 'getSongLyric'
+      hostUin: 0,
+      guid: getGuid(),
+      songmid: songmid,
+      format: 'jsonp',
+      pcachetime: +new Date(),
+      callback: 'getSongLyric'
     })
   let url = '/apis/lyric/fcgi-bin/fcg_query_lyric_new.fcg'
   let options = {

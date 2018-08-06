@@ -120,9 +120,11 @@ export default {
   mounted() {
     this.scrollHeight = parseFloat(window.getComputedStyle(this.$refs.bgImg, null).getPropertyValue('padding-bottom'))
     this.$nextTick(() => {
-      let bgImgHeight = this.$refs.bgImg.clientHeight
-      let imagewithListHeight = this.$refs.imagewithList.clientHeight
-      this.$refs.loading.style.height = imagewithListHeight - bgImgHeight + 'px'
+      if (this.$refs.bgImg && this.$refs.bgImg.clientHeight) {
+        let bgImgHeight = this.$refs.bgImg.clientHeight
+        let imagewithListHeight = this.$refs.imagewithList.clientHeight
+        this.$refs.loading.style.height = imagewithListHeight - bgImgHeight + 'px'
+      }
     })
   }
 }
