@@ -18,7 +18,7 @@
               :key="value.id"
               @click="detail(value)">
             <div class='singer-url'>
-              <img :src="value.imgUrl">
+              <img v-lazy="value.imgUrl">
             </div>
             <div class='singer-name'>{{value.singerName}}</div>
           </li>

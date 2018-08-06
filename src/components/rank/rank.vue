@@ -7,11 +7,11 @@
             class='rank-item'
             @click.prevent="openDetail(item)">
         <div class='rank-left'>
-          <img class='rank-image' :src="item.pic_v12" alt="">
+          <img class='rank-image' v-lazy="item.picUrl">
         </div>
         <ul class='rank-right'>
           <li class='rank-right-item'
-            v-for="(detail, idx) in item.songlist"
+            v-for="(detail, idx) in item.songList"
             v-if="idx < 3"
             :key="idx">
             <span class='item-num'>{{idx}}</span>
@@ -54,9 +54,9 @@ export default {
       setRankItem: 'SET_RANK'
     }),
     getlist() {
-      getTopList().then((data) => {
-        if (data && data.length && data[0].List) {
-          this.topList = data[0].List.concat()
+      getTopList().then((res) => {
+        if (res.code === 0) {
+          this.topList = res.data.topList.concat()
         }
       }).catch(function(err) {
         console.log(err)
@@ -70,7 +70,7 @@ export default {
     },
     openDetail(item) {
       this.setRankItem(item)
-      this.$router.push({path: `/rank/${item.topID}`})
+      this.$router.push({path: `/rank/${item.id}`})
     }
   }
 }

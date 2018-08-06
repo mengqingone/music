@@ -1,6 +1,6 @@
 <template>
   <div @click="turnFullScreen"><!---->
-    <div class='mini-image' ref='miniImage'><img :src="currentSong.image" class='image'></div>
+    <div class='mini-image' ref='miniImage'><img v-lazy="currentSong.image" class='image'></div>
     <div class='mini-info'>
       <div class='mini-songname'>{{currentSong.songname}}</div>
       <div class='mini-singer'>{{currentSong.singer}}</div>

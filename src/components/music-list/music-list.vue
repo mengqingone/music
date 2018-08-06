@@ -4,7 +4,7 @@
       <div class='background-image'
             ref='bgImg'
             :class="{'bg-reduce':reduceHeight}">
-        <img :src='bgImage'>
+        <img v-lazy='bgImage'>
         <div class='bg-blur'></div>
         <div class='play-btn'
             v-show="!reduceHeight && songs.length">
@@ -24,7 +24,7 @@
                 :probeType="probeType"
                 @scroll="scroll"
                 ref="songscroll">
-          <song-list :s-list="songs" @play="playSong"></song-list>
+          <song-list :s-list="songs" @play="playSong" :rank="rank"></song-list>
         </scroll>
       </div>
       <div class='songs-loading' v-show="!songs.length" ref="loading">
@@ -62,6 +62,10 @@ export default {
     title: {
       type: String,
       default: ''
+    },
+    rank: {
+      type: Boolean,
+      default: false
     }
   },
   data() {

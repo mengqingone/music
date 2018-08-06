@@ -1,9 +1,17 @@
 <template>
   <div class="page">
     <ul class='container'>
-      <li v-for="(item, index) in sList" :key="index" @click="playSong(index)">
-        <h2>{{item.songname}}</h2>
-        <p>{{item.singer + "." + item.albumname}}</p>
+      <li v-for="(item, index) in sList"
+        :key="index"
+        @click="playSong(index)"
+        :class="[{'item':rank}]">
+        <div v-if="rank" class='rank'>
+          <span :class="getClass(index)">{{ index >= 2 ?  index+1 : ''}}</span>
+        </div>
+        <div :class="[{'content':rank}]">
+          <h2>{{item.songname}}</h2>
+          <p>{{item.singer + "." + item.albumname}}</p>
+        </div>
       </li>
     </ul>
   </div>
@@ -12,7 +20,8 @@
 <script>
 export default {
   props: {
-    sList: Array
+    sList: Array,
+    rank: Boolean
   },
   data() {
     return {
@@ -25,12 +34,16 @@ export default {
   methods: {
     playSong(index) {
       this.$emit('play', index)
+    },
+    getClass(index) {
+      return index >= 2 ? 'text' : 'icon' + index + ' icon'
     }
   }
 }
 </script>
 
 <style lang="stylus" scoped>
+@import '~common/stylus/mixin'
 .container
   width: 100%
   height: auto
@@ -43,6 +56,10 @@ export default {
     font-size: 14px
     flex-direction column
     justify-content center
+    &.item
+      display flex
+      align-items center
+      flex-direction row
     h2
       text-overflow: ellipsis;
       overflow: hidden;
@@ -54,5 +71,25 @@ export default {
       white-space: nowrap;
       margin-top: 4px;
       color: hsla(0,0%,100%,.3)
-
+    .rank
+      flex: 0 0 25px;
+      width: 25px;
+      margin-right: 30px;
+      text-align: center;
+    .content
+      flex: 1;
+      line-height: 20px;
+      overflow: hidden;
+.icon0
+  bg-image('~common/image/songlist/first')
+.icon1
+  bg-image('~common/image/songlist/second')
+.icon
+  display: inline-block;
+  width: 25px;
+  height: 24px;
+  background-size: 25px 24px;
+.text
+  color: #ffcd32;
+  font-size: 18px;
 </style>

@@ -1,7 +1,7 @@
 <template>
   <div class='normal-page'>
     <div class='back-ground'>
-      <img :src="currentSong.image" alt="">
+      <img v-lazy="currentSong.image" alt="">
     </div>
     <div class='top'>
       <div class='back'>
@@ -19,7 +19,7 @@
         <div class='middle-lf' ref="middleLf">
           <div class='middle-rotate' ref='middleRotate'>
             <div class='middle-Mask'>
-              <img class='middle-image' :src="currentSong.image">
+              <img class='middle-image' v-lazy="currentSong.image">
             </div>
           </div>
           <div class='middle-songlyric'>

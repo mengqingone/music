@@ -5,7 +5,7 @@
         <div class='music-frame'>
           <slider v-if="this.imageList.length > 0" :imageList="imageList">
             <li v-for="(item, index) in imageList" :key="index" class='list-item'>
-              <img :src="item.pic_info.url"
+              <img v-lazy="item.pic_info.url"
                   class='slider-img needsclick'
                   @load="imageLoad">
             </li>
