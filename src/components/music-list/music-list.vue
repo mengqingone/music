@@ -41,7 +41,7 @@
 </template>
 
 <script>
-import songList from '@/base/song-list'
+import songList from '@/base/song-list/song-list'
 import scroll from '@/base/scroll'
 import loading from '@/base/loading/imageloading'
 import {mapActions} from 'vuex'

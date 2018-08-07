@@ -81,9 +81,9 @@ export default {
       line-height: 20px;
       overflow: hidden;
 .icon0
-  bg-image('~common/image/songlist/first')
+  bg-image('first')
 .icon1
-  bg-image('~common/image/songlist/second')
+  bg-image('second')
 .icon
   display: inline-block;
   width: 25px;

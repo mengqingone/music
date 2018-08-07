@@ -25,9 +25,9 @@
 <script>
 import {mapGetters, mapMutations} from 'vuex'
 import {setUrl} from '@/common/js/song.js'
-import audioPlayer from '@/base/audio'
-import normalPlayer from '@/base/normal-Player'
-import miniPlayer from '@/base/mini-Player'
+import audioPlayer from '@/base/player/audio'
+import normalPlayer from '@/base/player/normal-Player'
+import miniPlayer from '@/base/player/mini-Player'
 
 export default {
   data() {

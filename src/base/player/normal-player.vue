@@ -66,8 +66,8 @@
 import {mapGetters, mapMutations} from 'vuex'
 import playMode from '@/common/js/config.js'
 import {randomList} from '@/common/js/random.js'
-import processBar from '@/base/process-bar'
-import lyric from '@/base/lyric'
+import processBar from '@/base/player/process-bar'
+import lyric from '@/base/player/lyric'
 import ww from 'window-watcher'
 import animations from 'create-keyframe-animation'
 export default {

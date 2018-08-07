@@ -1,6 +1,8 @@
 <template>
-  <div class="page">
-    search
+  <div class="search-page">
+    <div class='search-input'>
+      <search-box></search-box>
+    </div>
   </div>
 </template>
 

@@ -18,7 +18,7 @@
 
 <script>
 import {mapGetters, mapMutations} from 'vuex'
-import processCircle from '@/base/process-circle'
+import processCircle from '@/base/player/process-circle'
 export default {
   props: ['percent'],
   data() {
