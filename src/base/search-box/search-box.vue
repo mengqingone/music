@@ -1,20 +1,41 @@
 <template>
   <div class="search-box">
-    <input type="text" class="input-box" placeholder="搜索歌曲、歌手">
+    <input type="text" class="input-box" v-model="query" placeholder="搜索歌曲、歌手">
     <div class='icon-left'>
       <span class='icon icon-search'></span>
     </div>
     <div class='icon-right'>
-      <span class='icon icon-dismiss'></span>
+      <span class='icon icon-dismiss' v-show="query" @click="clear"></span>
     </div>
   </div>
 </template>
 
 <script>
+import {delayFunction} from '@/api/delayFunction.js'
 export default {
   data() {
     return {
-      name: 'search-box'
+      name: 'search-box',
+      query: ''
+    }
+  },
+  created() {
+    this.$bus.$on('setQuery', (query) => {
+      this.query = query
+    })
+  },
+  destroyed() {
+    this.$bus.$off('setQuery')
+  },
+  mounted() {
+    // 函数 柯里化
+    this.$watch('query', delayFunction((val, old) => {
+      this.$emit('setQuery', val)
+    }, 400))
+  },
+  methods: {
+    clear() {
+      this.query = ''
     }
   }
 }

@@ -1,14 +1,14 @@
 <template>
   <div class="search-page">
     <div class='search-input'>
-      <search-box></search-box>
+      <search-box @setQuery="setQuery"></search-box>
     </div>
     <div class='search-hot' v-show="!searching">
-      <search-hot></search-hot>
+      <search-hot ref="searchHot"></search-hot>
       <!-- <history></history> -->
     </div>
     <div class='search-result' v-show="searching">
-      <result></result>
+      <result :query="query"></result>
     </div>
   </div>
 </template>
@@ -21,13 +21,30 @@ export default {
   data() {
     return {
       name: 'search',
-      searching: true
+      query: ''
     }
   },
   components: {
     searchBox,
     searchHot,
     result
+  },
+  computed: {
+    searching() {
+      return this.query !== ''
+    }
+  },
+  methods: {
+    setQuery(query) {
+      this.query = query
+    }
+  },
+  watch: {
+    searching(val) {
+      if (!val) {
+        setTimeout(() => { this.$refs.searchHot.refresh() }, 400)
+      }
+    }
   }
 }
 </script>
@@ -40,9 +57,5 @@ export default {
   top 88px
   bottom 0
   .search-input
-    margin: 20px
-  .search-hot
-    margin 0 20px 20px
-  .search-result
     margin: 20px
 </style>

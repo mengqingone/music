@@ -33,6 +33,14 @@ export default {
     listenScroll: {
       type: Boolean,
       default: false
+    },
+    loadmore: {
+      type: Boolean,
+      default: false
+    },
+    hasdata: {
+      type: Boolean,
+      default: false
     }
   },
   methods: {
@@ -51,9 +59,15 @@ export default {
         probeType: this.probeType
       })
       if (this.listenScroll) {
-        let _this = this
-        this.scroll.on('scroll', function(e) {
-          _this.$emit('scroll', e)
+        this.scroll.on('scroll', (e) => {
+          this.$emit('scroll', e)
+        })
+      }
+      if (this.loadmore) {
+        this.scroll.on('scrollEnd', (e) => {
+          if (e.y <= this.scroll.maxScrollY && this.hasdata) {
+            this.$emit('scrollToEnd')
+          }
         })
       }
     },
