@@ -123,6 +123,7 @@ export default {
       } else {
         this.play(item)
       }
+      this.$emit('saveQuery')
     },
     handlePlayList(list) {
       if (list.length > 0) {
@@ -134,6 +135,9 @@ export default {
       setUrl(song).then(() => {
         this.playSong(song)
       })
+    },
+    refresh() {
+      this.$refs.scroll.refresh()
     }
   }
 }

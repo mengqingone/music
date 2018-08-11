@@ -28,6 +28,9 @@ const getters = {
   },
   getRankItem: state => {
     return state.rank
+  },
+  getSearchHistory: state => {
+    return state.searchHistory
   }
 }
 

@@ -1,7 +1,7 @@
 import * as types from './types'
 import {randomList} from '@/common/js/random.js'
 import playMode from '@/common/js/config.js'
-
+import {storeLocalSearch, deleteLocalHistory, removeLocalHistory} from '@/api/localstore.js'
 function _playOneSong({ commit, state }, song) {
   let list = []
   list.push(song)
@@ -89,6 +89,18 @@ const actions = {
       _playOldSong({ commit, state }, song)
     }
     commit(types.SET_FULLSCREEN, true)
+  },
+  storeHistory({commit}, query) {
+    let history = storeLocalSearch(query)
+    commit(types.SET_SEARCHHISTORY, history)
+  },
+  deleteHistory({ commit, state }, query) {
+    let history = deleteLocalHistory(query)
+    commit(types.SET_SEARCHHISTORY, history)
+  },
+  removeHistory({commit}) {
+    removeLocalHistory()
+    commit(types.SET_SEARCHHISTORY, [])
   }
 }
 

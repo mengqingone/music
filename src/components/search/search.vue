@@ -3,12 +3,11 @@
     <div class='search-input'>
       <search-box @setQuery="setQuery"></search-box>
     </div>
-    <div class='search-hot' v-show="!searching">
+    <div class='search-hot' v-show="this.query === ''">
       <search-hot ref="searchHot"></search-hot>
-      <!-- <history></history> -->
     </div>
-    <div class='search-result' v-show="searching">
-      <result :query="query"></result>
+    <div class='search-result' v-show="this.query !== ''">
+      <result :query="query" ref="result" @saveQuery="saveQuery"></result>
     </div>
   </div>
 </template>
@@ -17,6 +16,7 @@
 import searchBox from '@/base/search-box/search-box'
 import searchHot from '@/base/search-hot/search-Hot'
 import result from '@/base/result/result'
+import {mapActions} from 'vuex'
 export default {
   data() {
     return {
@@ -29,20 +29,23 @@ export default {
     searchHot,
     result
   },
-  computed: {
-    searching() {
-      return this.query !== ''
-    }
-  },
   methods: {
+    ...mapActions([
+      'storeHistory'
+    ]),
     setQuery(query) {
       this.query = query
+    },
+    saveQuery() {
+      this.storeHistory(this.query)
     }
   },
   watch: {
-    searching(val) {
-      if (!val) {
+    query(val) {
+      if (val === '') {
         setTimeout(() => { this.$refs.searchHot.refresh() }, 400)
+      } else if (val !== '') {
+        setTimeout(() => { this.$refs.result.refresh() }, 400)
       }
     }
   }

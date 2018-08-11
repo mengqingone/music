@@ -1,6 +1,6 @@
 <template>
   <div class='search-hot-page' ref="searchHotPage">
-    <scroll :listLength="hotlist.length" class='swapper' ref="scroll">
+    <scroll :listLength="totallist.length" class='swapper' ref="scroll">
       <div>
         <div class='search-words'>
           <div class='title'>
@@ -12,11 +12,16 @@
             </li>
           </ul>
         </div>
-        <div class='search-history'>
-          <history></history>
+        <div class='search-history' v-show="searchHistory.length">
+          <history title='搜索历史' :list="searchHistory" ref='history' @openPrompt="openPrompt"></history>
         </div>
       </div>
     </scroll>
+    <prompt class='prompt' prompt="是否清空所有搜索记录"
+            leftBtn="确定" rightBtn='取消'
+            @makeSure="removeAll"
+            @cancel="cancel"
+            v-show="showPrompt"></prompt>
   </div>
 </template>
 
@@ -25,17 +30,30 @@ import scroll from '@/base/scroll'
 import history from '@/base/history/history'
 import {hotsearch} from '@/api/search.js'
 import mixin from '@/api/mixin'
+import {mapGetters} from 'vuex'
+import prompt from '@/base/prompt/prompt'
 export default {
   mixins: [mixin],
   data() {
     return {
       name: 'searchHot',
-      hotlist: []
+      hotlist: [],
+      historyList: [],
+      showPrompt: false
     }
+  },
+  computed: {
+    totallist() {
+      return this.hotlist.concat(this.searchHistory)
+    },
+    ...mapGetters({
+      searchHistory: 'getSearchHistory'
+    })
   },
   components: {
     history,
-    scroll
+    scroll,
+    prompt
   },
   created() {
     this.getHotList()
@@ -61,6 +79,17 @@ export default {
     },
     refresh() {
       this.$refs.scroll.refresh()
+    },
+    removeAll() {
+      this.$refs.history.removeHistory()
+      console.log(this)
+      this.cancel()
+    },
+    cancel() {
+      this.showPrompt = false
+    },
+    openPrompt() {
+      this.showPrompt = true
     }
   }
 }

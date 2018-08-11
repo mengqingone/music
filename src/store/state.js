@@ -1,5 +1,5 @@
 import playMode from '@/common/js/config.js'
-
+import {getLocalSearch} from '@/api/localstore.js'
 let state = {
   singer: {},
   playing: false,
@@ -9,7 +9,8 @@ let state = {
   mode: playMode.sequence,
   currentIndex: -1,
   currentDisc: {},
-  rank: {}
+  rank: {},
+  searchHistory: getLocalSearch()
 }
 
 export default state

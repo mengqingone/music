@@ -2,38 +2,44 @@
   <div class="history-page">
     <ul>
       <li class='item'>
-        <span class='title'>搜索历史</span>
-        <span class='icon-clear'></span>
+        <span class='title'>{{title}}</span>
+        <span class='icon-clear' @click.stop="remove"></span>
       </li>
-      <li class='item'>
-        <span class='title'>周杰伦</span>
-        <span class='icon-delete'></span>
-      </li>
-      <li class='item'>
-        <span class='title'>空空如也</span>
-        <span class='icon-delete'></span>
-      </li>
-      <li class='item'>
-        <span class='title'>空空如也</span>
-        <span class='icon-delete'></span>
-      </li>
-      <li class='item'>
-        <span class='title'>空空如也</span>
-        <span class='icon-delete'></span>
-      </li>
-      <li class='item'>
-        <span class='title'>空空如也</span>
-        <span class='icon-delete'></span>
+      <li class='item' v-for="(item, index) in list" :key="index">
+        <span class='title'>{{item}}</span>
+        <span class='icon-delete' @click.stop="deleteHistory(item)"></span>
       </li>
     </ul>
   </div>
 </template>
 
 <script>
+import { mapActions } from 'vuex'
 export default {
+  props: {
+    title: {
+      default: '',
+      type: String
+    },
+    list: {
+      default: () => {
+        return []
+      },
+      type: Array
+    }
+  },
   data() {
     return {
       name: 'history'
+    }
+  },
+  methods: {
+    ...mapActions([
+      'deleteHistory',
+      'removeHistory'
+    ]),
+    remove() {
+      this.$emit('openPrompt')
     }
   }
 }

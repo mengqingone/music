@@ -93,7 +93,7 @@ export default {
     })
   },
   watch: {
-    listLength() {
+    listLength(val) {
       this.refresh()
     }
   }
