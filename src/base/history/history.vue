@@ -6,7 +6,7 @@
         <span class='icon-clear' @click.stop="remove"></span>
       </li>
       <li class='item' v-for="(item, index) in list" :key="index">
-        <span class='title'>{{item}}</span>
+        <span class='title'  @click.stop="query(item)">{{item}}</span>
         <span class='icon-delete' @click.stop="deleteHistory(item)"></span>
       </li>
     </ul>
@@ -40,6 +40,9 @@ export default {
     ]),
     remove() {
       this.$emit('openPrompt')
+    },
+    query(item) {
+      this.$bus.$emit('setQuery', item)
     }
   }
 }

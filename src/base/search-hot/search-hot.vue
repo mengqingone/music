@@ -82,7 +82,6 @@ export default {
     },
     removeAll() {
       this.$refs.history.removeHistory()
-      console.log(this)
       this.cancel()
     },
     cancel() {

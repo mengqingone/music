@@ -54,6 +54,8 @@ export default {
     query(val) {
       this.querylist = []
       this.searchQuery()
+      this.page = 1
+      this.hasdata = false
     },
     hasdata(val) {
       if (!val && this.querylist.length) {
@@ -89,7 +91,7 @@ export default {
     },
     normalize(data) {
       let list = []
-      if (data.zhida.singerid && this.page === 1) {
+      if (data.zhida.singername && this.page === 1) {
         list.push({...data.zhida, ...{type: this.SINGERTYPE}})
       }
       if (data.song && data.song.list.length) {
