@@ -13,7 +13,7 @@
           </ul>
         </div>
         <div class='search-history' v-show="searchHistory.length">
-          <history title='搜索历史' :list="searchHistory" ref='history' @openPrompt="openPrompt"></history>
+          <history title='搜索历史' :isSearchPage="isSearchPage" :list="searchHistory" ref='history' @openPrompt="openPrompt"></history>
         </div>
       </div>
     </scroll>
@@ -29,7 +29,7 @@
 import scroll from '@/base/scroll'
 import history from '@/base/history/history'
 import {hotsearch} from '@/api/search.js'
-import mixin from '@/api/mixin'
+import {mixin} from '@/api/mixin'
 import {mapGetters} from 'vuex'
 import prompt from '@/base/prompt/prompt'
 export default {
@@ -39,7 +39,8 @@ export default {
       name: 'searchHot',
       hotlist: [],
       historyList: [],
-      showPrompt: false
+      showPrompt: false,
+      isSearchPage: true
     }
   },
   computed: {
@@ -98,13 +99,14 @@ export default {
 .search-hot-page
   position: fixed
   top 168px
-  left 20px
-  right 20px
+  left 0px
+  right 0px
   bottom 0
   overflow hidden
 .swapper
   height: 100%
 .search-words
+  padding: 20px
   .title
     margin-bottom: 20px
     font-size: 14px

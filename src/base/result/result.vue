@@ -23,16 +23,18 @@
 import scroll from '@/base/scroll'
 import loading from '@/base/loading/imageloading'
 import {search} from '@/api/search.js'
-import {createSong, setUrl} from '@/common/js/song.js'
-import {createSinger} from '@/common/js/singer.js'
-import { mapMutations, mapActions } from 'vuex'
-import mixin from '@/api/mixin'
+import {createSong} from '@/common/js/song.js'
+import {mixin} from '@/api/mixin'
 export default {
   mixins: [mixin],
   props: {
     query: {
       type: String,
       default: ''
+    },
+    onlySong: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -64,12 +66,6 @@ export default {
     }
   },
   methods: {
-    ...mapActions([
-      'playSong'
-    ]),
-    ...mapMutations({
-      setSinger: 'SET_SINGER'
-    }),
     showIcon(item) {
       return (item.type) && (item.type === 2)
         ? 'icon icon-mine' : 'icon icon-music'
@@ -91,7 +87,7 @@ export default {
     },
     normalize(data) {
       let list = []
-      if (data.zhida.singername && this.page === 1) {
+      if (data.zhida.singername && this.page === 1 && !this.onlySong) {
         list.push({...data.zhida, ...{type: this.SINGERTYPE}})
       }
       if (data.song && data.song.list.length) {
@@ -118,25 +114,13 @@ export default {
       }
     },
     clickItem(item) {
-      if (item.type === this.SINGERTYPE) {
-        let singer = createSinger(item.singerid, item.singername, item.singermid, '')
-        this.setSinger(singer)
-        this.$router.push({path: `/singer/${singer.id}`})
-      } else {
-        this.play(item)
-      }
-      this.$emit('saveQuery')
+      this.$emit('clickItem', item)
     },
     handlePlayList(list) {
       if (list.length > 0) {
         this.$refs.resultPage.style.bottom = '60px'
         this.$refs.scroll.refresh()
       }
-    },
-    play(song) {
-      setUrl(song).then(() => {
-        this.playSong(song)
-      })
     },
     refresh() {
       this.$refs.scroll.refresh()
@@ -147,12 +131,8 @@ export default {
 
 <style lang="stylus" scoped>
 .result-page
-  position: fixed
-  top: 168px
-  left 20px
-  right 20px
-  bottom 0
-  overflow hidden
+  width: 100%
+  height: 100%
 .swapper
   height: 100%
 .item

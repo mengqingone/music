@@ -13,13 +13,14 @@
       </normal-player>
     </transition>
     <transition name='mini'>
-      <mini-player  class='mini-player' :percent="percent" v-show="!fullgreen"></mini-player>
+      <mini-player  class='mini-player' :percent="percent" v-show="!fullgreen" @showPlaylist="showPlaylist"></mini-player>
     </transition>
     <div class='music-list' v-if="!fullgreen && showList"></div>
     <audio-player :url="this.currentSong.url"
                   v-if="this.currentSong && this.currentSong.url"
                   @setPercent="setPercent">
     </audio-player>
+    <play-list ref="playlist"></play-list>
   </div>
 </template>
 <script>
@@ -28,7 +29,7 @@ import {setUrl} from '@/common/js/song.js'
 import audioPlayer from '@/base/player/audio'
 import normalPlayer from '@/base/player/normal-Player'
 import miniPlayer from '@/base/player/mini-Player'
-
+import playList from '@/components/play-list/play-list'
 export default {
   data() {
     return {
@@ -40,7 +41,8 @@ export default {
   components: {
     audioPlayer,
     normalPlayer,
-    miniPlayer
+    miniPlayer,
+    playList
   },
   computed: {
     ...mapGetters({
@@ -52,7 +54,7 @@ export default {
   watch: {
     // 获取数据
     currentSong(val, old) {
-      if (old && (val.songid === old.songid)) {
+      if (!val || (old && (val.songid === old.songid))) {
         return
       }
       // 获取数据之前工作
@@ -67,7 +69,6 @@ export default {
       }, 1000)
 
       if (val.url === null || val.url === '') {
-        console.log(val)
         this.getUrlAgain()
       }
     }
@@ -112,6 +113,9 @@ export default {
     },
     afterLeave() {
       this.$refs.normalPlayer.afterLeave()
+    },
+    showPlaylist() {
+      this.$refs.playlist.open()
     }
   }
 }

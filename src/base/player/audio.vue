@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import {mapGetters, mapMutations} from 'vuex'
+import {mapGetters, mapMutations, mapActions} from 'vuex'
 import playMode from '@/common/js/config.js'
 export default {
   props: {
@@ -55,11 +55,21 @@ export default {
     this.$bus.$off('jumpTo', this.handleJumpTo)
   },
   methods: {
+    ...mapActions([
+      'savePlayHistory'
+    ]),
     ...mapMutations({
       setPlayingState: 'SET_PLAYINGSTATE'
     }),
     ready(e) {
       this.$bus.$emit('makeToReady')
+      // 控制播放
+      if (this.playingState) {
+        this.$refs.audio.play()
+        this.savePlayHistory(this.currentSong)
+      } else {
+        this.$refs.audio.pause()
+      }
       this.$refs.audio.volume = 0.5 // 控制音量
       // 校准歌词
       this.$bus.$emit('jumpLyric', e.target.currentTime)
@@ -70,7 +80,9 @@ export default {
     },
     timeUpdate(e) {
       let time = e.target.currentTime
-      this.$emit('setPercent', time / this.currentSong.duration)
+      if (this.currentSong && this.currentSong.duration > 0) {
+        this.$emit('setPercent', time / this.currentSong.duration)
+      }
     },
     seeked() {
       this.$refs.audio.play()

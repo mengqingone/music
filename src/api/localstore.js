@@ -1,6 +1,8 @@
 import storage from 'good-storage'
 const localHistory = '_localSearch_'
-const limit = 10
+const searchLimit = 50
+const playHistory = '_playHistory_'
+const playLimit = 50
 function _getLocal(key) {
   let list = []
   if (storage.has(key)) {
@@ -9,7 +11,7 @@ function _getLocal(key) {
   return list
 }
 
-function _storeLocal(list, keyword, compare) {
+function _storeLocal(list, keyword, limit, compare) {
   let index = list.findIndex(compare)
   if (index === -1 && list.length > (limit - 1)) {
     list.pop()
@@ -22,7 +24,7 @@ function _storeLocal(list, keyword, compare) {
 
 export function storeLocalSearch(query) {
   let list = _getLocal(localHistory)
-  list = _storeLocal(list, query, function(item) {
+  list = _storeLocal(list, query, searchLimit, function(item) {
     return item === query
   })
   storage.set(localHistory, list)
@@ -51,4 +53,17 @@ export function deleteLocalHistory(query) {
 
 export function removeLocalHistory() {
   storage.set(localHistory, [])
+}
+
+export function storePlayHistory(song) {
+  let list = _getLocal(playHistory)
+  list = _storeLocal(list, song, playLimit, function(item) {
+    return item.songid === song.songid
+  })
+  storage.set(playHistory, list)
+  return list
+}
+
+export function getPlayHistory(song) {
+  return _getLocal(playHistory)
 }

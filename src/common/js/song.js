@@ -19,7 +19,7 @@ export function createSong(obj) {
   let songid = obj.songid
   let songmid = obj.songmid
   let singer = ''
-  if (obj.singer && obj.singer.length > 0) {
+  if (obj.singer && obj.singer.length > 0 && (obj.singer instanceof Array)) {
     obj.singer.forEach(element => {
       singer += element.name + '/'
     })

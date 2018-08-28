@@ -57,6 +57,9 @@ const mutations = {
   },
   [types.SET_SEARCHHISTORY](state, searchHistory) {
     state.searchHistory = searchHistory
+  },
+  [types.SET_PLAYHISTORY](state, playHistory) {
+    state.playHistory = playHistory
   }
 }
 

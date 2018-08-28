@@ -1,6 +1,6 @@
 <template>
   <div class="search-box">
-    <input type="text" class="input-box" v-model="query" placeholder="搜索歌曲、歌手">
+    <input type="text" class="input-box" v-model="query" :placeholder="placeholder">
     <div class='icon-left'>
       <span class='icon icon-search'></span>
     </div>
@@ -13,6 +13,12 @@
 <script>
 import {delayFunction} from '@/api/delayFunction.js'
 export default {
+  props: {
+    placeholder: {
+      default: '搜索歌曲、歌手',
+      type: String
+    }
+  },
   data() {
     return {
       name: 'search-box',

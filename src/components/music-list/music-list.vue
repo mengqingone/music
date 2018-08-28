@@ -24,7 +24,7 @@
                 :probeType="probeType"
                 @scroll="scroll"
                 ref="songscroll">
-          <song-list :s-list="songs" @play="playSong" :rank="rank"></song-list>
+          <song-list :s-list="songs" @clickItem="playSong" :rank="rank"></song-list>
         </scroll>
       </div>
       <div class='songs-loading' v-show="!songs.length" ref="loading">
@@ -45,7 +45,8 @@ import songList from '@/base/song-list/song-list'
 import scroll from '@/base/scroll'
 import loading from '@/base/loading/imageloading'
 import {mapActions} from 'vuex'
-import mixin from '@/api/mixin'
+import {mixin} from '@/api/mixin'
+
 export default {
   mixins: [mixin],
   props: {
@@ -108,7 +109,7 @@ export default {
     back() {
       this.$router.back()
     },
-    playSong(index) {
+    playSong(item, index) {
       this.playMusic({songlist: this.songs, index})
     },
     randomPlay() {

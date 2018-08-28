@@ -19,7 +19,7 @@
         <div class='middle-lf' ref="middleLf">
           <div class='middle-rotate' ref='middleRotate'>
             <div class='middle-Mask'>
-              <img class='middle-image' v-lazy="currentSong.image">
+              <img class='middle-image play' :class="[!playingState? 'pause': '']" v-lazy="currentSong.image">
             </div>
           </div>
           <div class='middle-songlyric'>
@@ -64,13 +64,15 @@
 </template>
 <script>
 import {mapGetters, mapMutations} from 'vuex'
-import playMode from '@/common/js/config.js'
-import {randomList} from '@/common/js/random.js'
+
 import processBar from '@/base/player/process-bar'
 import lyric from '@/base/player/lyric'
 import ww from 'window-watcher'
 import animations from 'create-keyframe-animation'
+import {playMixin} from '@/api/mixin'
+import playMode from '@/common/js/config.js'
 export default {
+  mixins: [playMixin],
   props: {
     percent: {
       type: Number,
@@ -92,18 +94,10 @@ export default {
   },
   computed: {
     ...mapGetters({
-      currentSong: 'getCurrentSong',
       playingState: 'getPlaying',
-      playList: 'getPlayList',
       fullgreen: 'getFullScreen',
-      currentIndex: 'getCurrentIndex',
-      sequenceList: 'getSequenceList',
-      mode: 'getMode'
-    }),
-    currentMode() {
-      return this.mode === playMode.sequence ? 'icon-sequence'
-        : this.mode === playMode.loop ? 'icon-loop' : 'icon-random'
-    }
+      currentIndex: 'getCurrentIndex'
+    })
   },
   created() {
     this.middleTouch = {}
@@ -123,11 +117,7 @@ export default {
   },
   methods: {
     ...mapMutations({
-      setFullScreen: 'SET_FULLSCREEN',
-      setCurrentMode: 'SET_MODE',
-      setPlaylist: 'SET_PLAYLIST',
-      setPlayingState: 'SET_PLAYINGSTATE',
-      setCurrentIndex: 'SET_CURRENTINDEX'
+      setFullScreen: 'SET_FULLSCREEN'
     }),
     turnMiniPlayer() {
       this.setFullScreen(false)
@@ -146,31 +136,11 @@ export default {
     handleMakeUnReady() {
       this.songReady = false
     },
-    changeMode() {
-      let song = this.currentSong
-      let list = this.mode === playMode.random
-        ? this.randomPlayList() : this.sequenceList
-      this.setCurrentMode((this.mode + 1) % 3)
-      this.resetCurrentSong(list, song)
-      this.setPlaylist(list)
-    },
-    resetCurrentSong(list, song) {
-      let index = list.findIndex(function(ele) {
-        return ele.songid === song.songid
-      })
-      if (index !== -1) {
-        this.setCurrentIndex(index)
-      }
-    },
-    randomPlayList() {
-      let randomlist = randomList(this.playList)
-      return randomlist
-    },
     next() {
       if (!this.songReady) {
         return
       }
-      if (this.playList.length === 1) {
+      if (this.playList.length === 1 || this.mode === playMode.loop) {
         this.loop()
       } else {
         let index = this.currentIndex + 1
@@ -190,7 +160,7 @@ export default {
       if (!this.songReady) {
         return
       }
-      if (this.playList.length === 1) {
+      if (this.playList.length === 1 || this.mode === playMode.loop) {
         this.loop()
       } else {
         let index = this.currentIndex - 1
@@ -439,18 +409,24 @@ export default {
       width: 80%
       height: 0
       padding-bottom 80%
-      transform: rotate(30deg)
       .middle-Mask
         position: absolute
         box-sizing border-box
-        width 100%
-        height 100%
+        left 0
+        right 0
+        bottom 0
+        top 0
+        z-index 10
         border-radius 50%
         border: 10px solid hsla(0,0%,100%,.1);
         overflow hidden
         .middle-image
           width: 100%
           height: 100%
+          &.play
+            animation: rotate 20s linear infinite
+          &.pause
+            animation-play-state: paused
     .middle-songlyric
       width: 80%
       margin 30px auto 0
@@ -515,4 +491,9 @@ export default {
       font-size: 40px
       padding: 0 20px
       text-align center
+@keyframes rotate
+  0%
+    transform: rotate(0)
+  100%
+    transform: rotate(360deg)
 </style>

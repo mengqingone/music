@@ -11,7 +11,7 @@
                       @controlToggle="controlToggle">
         <div class='play-mini' :class="playingState? 'icon-pause-mini': 'icon-play-mini'" ></div>
       </process-circle>
-      <div class='icon-playlist'></div>
+      <div class='icon-playlist' @click.stop="showPlaylist"></div>
     </div>
   </div>
 </template>
@@ -48,6 +48,9 @@ export default {
     },
     turnFullScreen() {
       this.setFullScreen(true)
+    },
+    showPlaylist() {
+      this.$emit('showPlaylist')
     }
   }
 }

@@ -3,7 +3,7 @@
     <ul class='container'>
       <li v-for="(item, index) in sList"
         :key="index"
-        @click="playSong(index)"
+        @click="clickItem(item,index)"
         :class="[{'item':rank}]">
         <div v-if="rank" class='rank'>
           <span :class="getClass(index)">{{ index >= 2 ?  index+1 : ''}}</span>
@@ -32,8 +32,8 @@ export default {
 
   },
   methods: {
-    playSong(index) {
-      this.$emit('play', index)
+    clickItem(item, index) {
+      this.$emit('clickItem', item, index)
     },
     getClass(index) {
       return index >= 2 ? 'text' : 'icon' + index + ' icon'

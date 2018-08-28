@@ -1,7 +1,7 @@
 import * as types from './types'
 import {randomList} from '@/common/js/random.js'
 import playMode from '@/common/js/config.js'
-import {storeLocalSearch, deleteLocalHistory, removeLocalHistory} from '@/api/localstore.js'
+import {storeLocalSearch, deleteLocalHistory, removeLocalHistory, storePlayHistory} from '@/api/localstore.js'
 function _playOneSong({ commit, state }, song) {
   let list = []
   list.push(song)
@@ -42,12 +42,15 @@ function _playOldSong({ commit, state }, song) {
 }
 
 function findSong(list, song) {
-  list.forEach((element, index) => {
+  let findIndex = -1
+  for (let index = 0; index < list.length; index++) {
+    const element = list[index]
     if (element.songid === song.songid) {
-      return index
+      findIndex = index
+      break
     }
-  })
-  return -1
+  }
+  return findIndex
 }
 
 const actions = {
@@ -101,6 +104,35 @@ const actions = {
   removeHistory({commit}) {
     removeLocalHistory()
     commit(types.SET_SEARCHHISTORY, [])
+  },
+  deleteOneSong({ commit, state }, song) {
+    let playlist = state.playList.concat()
+    let index = findSong(playlist, song)
+    let seqlist = state.sequenceList.concat()
+    let seqindex = findSong(seqlist, song)
+    let currentIndex = state.currentIndex
+    playlist.splice(index, 1)
+    seqlist.splice(seqindex, 1)
+
+    commit(types.SET_PLAYLIST, playlist)
+    commit(types.SET_SEQUENCELIST, seqlist)
+    // delete end of song
+    if (currentIndex > index || currentIndex === playlist.length) {
+      currentIndex--
+      commit(types.SET_CURRENTINDEX, currentIndex)
+    }
+    let playstate = playlist.length > 0
+    commit(types.SET_PLAYINGSTATE, playstate)
+  },
+  deleteAllSongs({ commit, state }) {
+    commit(types.SET_PLAYLIST, [])
+    commit(types.SET_SEQUENCELIST, [])
+    commit(types.SET_CURRENTINDEX, -1)
+    commit(types.SET_PLAYINGSTATE, false)
+  },
+  savePlayHistory({ commit, state }, song) {
+    let history = storePlayHistory(song)
+    commit(types.SET_PLAYHISTORY, history)
   }
 }
 

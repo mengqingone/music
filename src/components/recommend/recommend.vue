@@ -43,7 +43,7 @@ import { ERROR_OK } from '@/api/config.js'
 import slider from '@/base/slider'
 import scroll from '@/base/scroll'
 import loading from '@/base/loading/imageloading'
-import mixin from '@/api/mixin'
+import {mixin} from '@/api/mixin'
 import { mapMutations } from 'vuex'
 export default {
   mixins: [mixin],

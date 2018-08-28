@@ -7,7 +7,7 @@
       <search-hot ref="searchHot"></search-hot>
     </div>
     <div class='search-result' v-show="this.query !== ''">
-      <result :query="query" ref="result" @saveQuery="saveQuery"></result>
+      <result :query="query" ref="result" @clickItem="playItem"></result>
     </div>
   </div>
 </template>
@@ -16,12 +16,16 @@
 import searchBox from '@/base/search-box/search-box'
 import searchHot from '@/base/search-hot/search-Hot'
 import result from '@/base/result/result'
-import {mapActions} from 'vuex'
+import {mapActions, mapMutations} from 'vuex'
+import {createSinger} from '@/common/js/singer.js'
+import {setUrl} from '@/common/js/song.js'
+import {searchMixin} from '@/api/mixin.js'
 export default {
+  mixins: [searchMixin],
   data() {
     return {
       name: 'search',
-      query: ''
+      SINGERTYPE: 2
     }
   },
   components: {
@@ -31,13 +35,27 @@ export default {
   },
   methods: {
     ...mapActions([
-      'storeHistory'
+      'playSong'
     ]),
-    setQuery(query) {
-      this.query = query
+    ...mapMutations({
+      setSinger: 'SET_SINGER'
+    }),
+    playItem(item) {
+      if (item.type === this.SINGERTYPE) {
+        let singer = createSinger(item.singerid, item.singername, item.singermid, '')
+        this.setSinger(singer)
+        this.$router.push({path: `/singer/${singer.id}`})
+      } else {
+        this.play(item)
+      }
+      this.saveQuery()
     },
-    saveQuery() {
-      this.storeHistory(this.query)
+    play(song) {
+      console.log('play')
+      setUrl(song).then(() => {
+        console.log(song)
+        this.playSong(song)
+      })
     }
   },
   watch: {
@@ -61,4 +79,11 @@ export default {
   bottom 0
   .search-input
     margin: 20px
+  .search-result
+    position: fixed;
+    top: 168px;
+    left: 20px;
+    right: 20px;
+    bottom: 0;
+    overflow: hidden;
 </style>

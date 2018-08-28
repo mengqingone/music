@@ -31,7 +31,7 @@
 <script>
 import {getTopList} from '@/api/rank.js'
 import scroll from '@/base/scroll'
-import mixin from '@/api/mixin'
+import {mixin} from '@/api/mixin'
 import loading from '@/base/loading/imageloading'
 import { mapMutations } from 'vuex'
 export default {

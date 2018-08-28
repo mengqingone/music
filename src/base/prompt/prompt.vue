@@ -1,5 +1,5 @@
 <template>
-  <transition>
+  <transition name='prompt'>
     <div class="prompt-page">
       <div class='prompt-frame'>
         <div class='container'>
@@ -24,11 +24,11 @@ export default {
       type: String
     },
     leftBtn: {
-      default: '',
+      default: '确定',
       type: String
     },
     rightBtn: {
-      default: '',
+      default: '取消',
       type: String
     }
   },
@@ -49,6 +49,14 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
+.prompt-enter, .prompt-leave-to
+  opacity: 0
+  .container
+    transform: translate3d(0, 100%,0)
+.prompt-enter-active, .prompt-leave-active
+  transition all 1s
+  .container
+    transition all 1s
 .prompt-page
   position: fixed
   top 0
@@ -66,8 +74,6 @@ export default {
     height: 0
     padding-bottom: 25%
     transform translate3d(-50%, -50%, 0)
-    background: #333
-    border-radius: 13px
     .container
       position absolute
       left 0
@@ -76,6 +82,8 @@ export default {
       top 0
       display flex
       flex-direction column
+      background: #333
+      border-radius: 13px
       .prompt-info
         flex 1
         display flex
@@ -96,4 +104,5 @@ export default {
           border-top: 1px solid rgba(0,0,0,.5);
           &:nth-child(1)
             border-right:1px solid rgba(0,0,0,.3);
+
 </style>

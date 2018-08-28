@@ -33,7 +33,7 @@ export default {
     }
   },
   mounted() {
-    this.$nextTick(function() {
+    this.$nextTick(() => {
       this.$processbar = this.$refs.processbar
       this.$processTrack = this.$refs.processtrack
       this.$processbtn = this.$refs.processbtn
