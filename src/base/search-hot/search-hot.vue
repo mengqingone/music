@@ -13,7 +13,7 @@
           </ul>
         </div>
         <div class='search-history' v-show="searchHistory.length">
-          <history title='搜索历史' :isSearchPage="isSearchPage" :list="searchHistory" ref='history' @openPrompt="openPrompt"></history>
+          <history title='搜索历史' parentName='search' :list="searchHistory" ref='history' @openPrompt="openPrompt"></history>
         </div>
       </div>
     </scroll>
@@ -39,8 +39,7 @@ export default {
       name: 'searchHot',
       hotlist: [],
       historyList: [],
-      showPrompt: false,
-      isSearchPage: true
+      showPrompt: false
     }
   },
   computed: {
@@ -70,7 +69,8 @@ export default {
       })
     },
     clickHotItem(item) {
-      this.$bus.$emit('setQuery', item.k)
+      let name = 'search'
+      this.$bus.$emit(name + 'setQuery', item.k)
     },
     handlePlayList(list) {
       if (list.length > 0) {

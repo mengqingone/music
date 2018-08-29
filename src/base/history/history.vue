@@ -1,12 +1,12 @@
 <template>
   <div class="history-page">
     <transition-group tag="ul" name='lists'>
-      <li class='item' v-show="isSearchPage" :key="title">
+      <li class='item' v-show="parentName === 'searchHot' " :key="title">
         <span class='title'>{{title}}</span>
         <span class='icon-clear' @click.stop="remove"></span>
       </li>
       <li class='item' v-for="(item) in list" :key="item">
-        <span class='title'  @click.stop="query(item)">{{item}}</span>
+        <span class='title'  @click.stop="search(item)">{{item}}</span>
         <span class='icon-delete' @click.stop="deleteHistory(item)"></span>
       </li>
     </transition-group>
@@ -27,9 +27,9 @@ export default {
       },
       type: Array
     },
-    isSearchPage: {
-      default: false,
-      type: Boolean
+    parentName: {
+      default: '',
+      type: String
     }
   },
   data() {
@@ -45,8 +45,8 @@ export default {
     remove() {
       this.$emit('openPrompt')
     },
-    query(item) {
-      this.$bus.$emit('setQuery', item)
+    search(item) {
+      this.$bus.$emit(this.parentName + 'setQuery', item)
     }
   }
 }

@@ -1,7 +1,7 @@
 <template>
   <div class="search-page">
     <div class='search-input'>
-      <search-box @setQuery="setQuery"></search-box>
+      <search-box @setQuery="setQuery" :parentName="name"></search-box>
     </div>
     <div class='search-hot' v-show="this.query === ''">
       <search-hot ref="searchHot"></search-hot>

@@ -7,7 +7,7 @@
       </div>
     </div>
     <div class="search-box-wrapper">
-      <search-box placeholder="搜索歌曲" @setQuery="setQuery"></search-box>
+      <search-box placeholder="搜索歌曲" :parentName="name" @setQuery="setQuery"></search-box>
     </div>
     <div  class="shortcut" v-show="this.query === ''">
       <switches :switchlist="switchlist" :currentIndex="switchIndex" @clickItem="switchItem"></switches>
@@ -22,7 +22,7 @@
                 class='list-scroll'
                 ref="searchHistoryScroll"
                 v-show="searchHistory.length > 0 && switchIndex === 1">
-          <history title='搜索历史' :list="searchHistory" ref='history'  @clickItem="setQuery"></history><!--@openPrompt="openPrompt"-->
+          <history title='搜索历史' :list="searchHistory" ref='history' :parentName="name" @clickItem="setQuery"></history><!--@openPrompt="openPrompt"-->
         </scroll>
       </div>
     </div>
@@ -48,6 +48,7 @@ export default {
   mixins: [searchMixin],
   data() {
     return {
+      name: 'addSong',
       showPage: false,
       showResult: false,
       addfinished: false,
@@ -87,8 +88,10 @@ export default {
     ]),
     show() {
       this.showPage = true
-      this.query = ''
       this.refresh()
+      setTimeout(() => {
+        this.$bus.$emit(this.name + 'setQuery', '')
+      }, 20)
     },
     hide() {
       this.showPage = false

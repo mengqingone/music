@@ -17,6 +17,10 @@ export default {
     placeholder: {
       default: '搜索歌曲、歌手',
       type: String
+    },
+    parentName: {
+      default: '',
+      type: String
     }
   },
   data() {
@@ -26,12 +30,14 @@ export default {
     }
   },
   created() {
-    this.$bus.$on('setQuery', (query) => {
+    this.$bus.$on(this.parentName + 'setQuery', (query) => {
       this.query = query
     })
   },
   destroyed() {
-    this.$bus.$off('setQuery')
+    this.$bus.$off(this.parentName + 'setQuery', (query) => {
+      this.query = query
+    })
   },
   mounted() {
     // 函数 柯里化
