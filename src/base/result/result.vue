@@ -5,7 +5,9 @@
             :listLength="querylist.length"
             :loadmore="loadmore"
             :hasdata="hasdata"
-            @scrollToEnd="loadingmore">
+            @scrollToEnd="loadingmore"
+            :listenScroll="listenScroll"
+            @scroll="scroll">
       <ul>
         <li class='item' v-for="(item, index) in querylist" :key="index" @click="clickItem(item)">
           <span :class="showIcon(item)"></span>
@@ -45,7 +47,8 @@ export default {
       page: 1,
       perpage: 20,
       SINGERTYPE: 2,
-      loadmore: true
+      loadmore: true,
+      listenScroll: true
     }
   },
   components: {
@@ -124,6 +127,9 @@ export default {
     },
     refresh() {
       this.$refs.scroll.refresh()
+    },
+    scroll(e) {
+      this.$emit('scroll')
     }
   }
 }

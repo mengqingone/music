@@ -1,6 +1,6 @@
 <template>
   <div class="search-box">
-    <input type="text" class="input-box" v-model="query" :placeholder="placeholder">
+    <input type="text" ref="input" class="input-box" v-model="query" :placeholder="placeholder">
     <div class='icon-left'>
       <span class='icon icon-search'></span>
     </div>
@@ -48,6 +48,9 @@ export default {
   methods: {
     clear() {
       this.query = ''
+    },
+    blur() {
+      this.$refs.input.blur()
     }
   }
 }

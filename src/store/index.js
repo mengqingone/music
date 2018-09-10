@@ -1,7 +1,7 @@
 import Vuex from 'vuex'
 import mutations from './mutation'
 import getters from './getters'
-import createLogger from 'vuex/dist/logger'
+// import createLogger from 'vuex/dist/logger'
 import state from './state'
 import Vue from 'vue'
 import actions from './actions'
@@ -12,7 +12,7 @@ const store = new Vuex.Store({
   mutations: mutations,
   getters: getters,
   strict: debug,
-  plugins: debug ? [createLogger()] : [],
+  // plugins: debug ? [createLogger()] : [],
   actions: actions
 })
 export default store

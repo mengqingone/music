@@ -1,13 +1,13 @@
 <template>
   <div class="search-page">
     <div class='search-input'>
-      <search-box @setQuery="setQuery" :parentName="name"></search-box>
+      <search-box @setQuery="setQuery" :parentName="name" ref="searchBox"></search-box>
     </div>
     <div class='search-hot' v-show="this.query === ''">
       <search-hot ref="searchHot"></search-hot>
     </div>
     <div class='search-result' v-show="this.query !== ''">
-      <result :query="query" ref="result" @clickItem="playItem"></result>
+      <result :query="query" ref="result" @clickItem="playItem"  @scroll="scroll"></result>
     </div>
   </div>
 </template>
@@ -51,9 +51,7 @@ export default {
       this.saveQuery()
     },
     play(song) {
-      console.log('play')
       setUrl(song).then(() => {
-        console.log(song)
         this.playSong(song)
       })
     }

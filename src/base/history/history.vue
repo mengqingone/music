@@ -1,7 +1,7 @@
 <template>
   <div class="history-page">
     <transition-group tag="ul" name='lists'>
-      <li class='item' v-show="parentName === 'searchHot' " :key="title">
+      <li class='item' v-show="parentName === 'search' " :key="title">
         <span class='title'>{{title}}</span>
         <span class='icon-clear' @click.stop="remove"></span>
       </li>

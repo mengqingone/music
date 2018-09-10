@@ -7,7 +7,11 @@
       </div>
     </div>
     <div class="search-box-wrapper">
-      <search-box placeholder="搜索歌曲" :parentName="name" @setQuery="setQuery"></search-box>
+      <search-box placeholder="搜索歌曲"
+                  :parentName="name"
+                  @setQuery="setQuery"
+                  ref="searchBox">
+      </search-box>
     </div>
     <div  class="shortcut" v-show="this.query === ''">
       <switches :switchlist="switchlist" :currentIndex="switchIndex" @clickItem="switchItem"></switches>
@@ -22,12 +26,12 @@
                 class='list-scroll'
                 ref="searchHistoryScroll"
                 v-show="searchHistory.length > 0 && switchIndex === 1">
-          <history title='搜索历史' :list="searchHistory" ref='history' :parentName="name" @clickItem="setQuery"></history><!--@openPrompt="openPrompt"-->
+          <history title='搜索历史' :list="searchHistory" ref='history' :parentName="name" @clickItem="setQuery" @scroll="scroll"></history><!--@openPrompt="openPrompt"-->
         </scroll>
       </div>
     </div>
     <div  class="search-result" v-show="this.query !== ''">
-      <result :query="query" :onlySong="onlySong" @clickItem="saveSong"></result>
+      <result :query="query" :onlySong="onlySong" @clickItem="saveSong" @scroll="scroll"></result>
     </div>
     <top-tip ref="topTip"></top-tip>
   </div>

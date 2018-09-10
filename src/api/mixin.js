@@ -91,6 +91,9 @@ export const searchMixin = {
     },
     saveQuery() {
       this.storeHistory(this.query)
+    },
+    scroll() {
+      this.$refs.searchBox.blur()
     }
   }
 }
